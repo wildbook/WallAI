@@ -1,6 +1,7 @@
 ﻿using System;
 using WallAI.Core.Entities.Stats;
 using WallAI.Core.Enums;
+using WallAI.Core.World;
 
 namespace WallAI.Core.Ai
 {
@@ -10,6 +11,7 @@ namespace WallAI.Core.Ai
         IReadOnlyStats MaxStats { get; }
 
         Random GetRandom();
+        IReadOnlyWorld2D GetVisibleTiles();
         void Move(Direction direction);
         void Kill();
     }

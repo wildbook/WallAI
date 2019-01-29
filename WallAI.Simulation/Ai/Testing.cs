@@ -9,6 +9,11 @@ namespace WallAI.Simulation.Ai
         public void Tick(IAiCore ai)
         {
             var rand = ai.GetRandom();
+            
+            using (ai.GetVisibleTiles())
+            {
+
+            }
 
             if (ai.Stats.Energy == 0)
             {
