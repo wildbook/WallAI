@@ -1,6 +1,7 @@
 using System;
 using WallAI.Core.Entities.Stats;
 using WallAI.Core.Enums;
+using WallAI.Core.Helpers;
 using WallAI.Core.Math.Geometry;
 using WallAI.Core.Tiles;
 using WallAI.Core.World;
@@ -58,6 +59,18 @@ namespace WallAI.Core.Ai
         }
 
         public void Kill() => Entity.Stats.Alive = false;
+
+        public IReadOnlyWorld2D GetVisibleTiles()
+        {
+            var visionRadius = 10;
+
+            var lockRect = new Rectangle2D(Location - new Point2D(visionRadius, visionRadius), visionRadius * 2, visionRadius * 2);
+            using (var map = LockRect(lockRect))
+            {
+                var visible = map.CreateDerivedWorld2D(x => throw new NotImplementedException());
+                return visible;
+            }
+        }
 
         private void DeltaEnergy(int energy)
         {
