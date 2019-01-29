@@ -23,6 +23,8 @@ namespace WallAI.Core.Math.Geometry
 
         public int X => _origin.X;
         public int Y => _origin.Y;
+        public int X2 => X + Width;
+        public int Y2 => Y + Height;
         public int Width { get; }
         public int Height { get; }
 
