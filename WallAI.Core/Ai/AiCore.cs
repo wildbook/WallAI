@@ -46,7 +46,7 @@ namespace WallAI.Core.Ai
             using (var map = LockRect(lockRect))
             {
                 if (map[destinationPoint].Entity != null)
-                    throw new DestinationContainsObject();
+                    throw new DestinationContainsObjectException();
 
                 var obj = map[Location];
                 map[Location] = new Tile2D();
@@ -73,5 +73,5 @@ namespace WallAI.Core.Ai
         }
     }
 
-    public class DestinationContainsObject : Exception { }
+    public class DestinationContainsObjectException : Exception { }
 }

@@ -1,4 +1,6 @@
-﻿namespace WallAI.Core.Math.Geometry
+﻿using System.Diagnostics.Contracts;
+
+namespace WallAI.Core.Math.Geometry
 {
     public readonly struct Rectangle2D
     {
@@ -24,6 +26,7 @@
         public int Width { get; }
         public int Height { get; }
 
+        [Pure]
         public bool ContainsPoint(Point2D point)
             => point.X >= X &&
                point.Y >= Y &&
