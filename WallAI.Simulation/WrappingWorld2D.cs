@@ -19,22 +19,10 @@ namespace WallAI.Simulation
             return i;
         }
 
-        protected override ITile2D this[int x, int y]
+        protected override ITile2D this[Point2D location]
         {
-            get
-            {
-                x = WrapInt(x, _size.X);
-                y = WrapInt(y, _size.Y);
-
-                return base[x, y];
-            }
-            set
-            {
-                x = WrapInt(x, _size.X);
-                y = WrapInt(y, _size.Y);
-
-                base[x, y] = value;
-            }
+            get => base[new Point2D(WrapInt(location.X, _size.X), WrapInt(location.Y, _size.Y))];
+            set => base[new Point2D(WrapInt(location.X, _size.X), WrapInt(location.Y, _size.Y))] = value;
         }
 
         public static IWorld2D Create(IWorld2DMethods methods, Point2D size, int seed) => new WrappingWorld2D(methods, size, seed);

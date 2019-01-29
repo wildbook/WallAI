@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using WallAI.Core.Entities.Stats;
 using WallAI.Core.Enums;
 using WallAI.Core.Math.Geometry;
 using WallAI.Core.Tiles;
+using WallAI.Core.World;
 using WallAI.Core.World.Ai;
 using WallAI.Core.World.Entities;
 
@@ -12,8 +13,8 @@ namespace WallAI.Core.Ai
     {
         private readonly AiWorld2D _aiWorld2D;
         private IWorld2DEntity Entity { get; }
-        public IReadOnlyStats Stats => (IReadOnlyStats)Entity.Stats;
-        public IReadOnlyStats MaxStats => (IReadOnlyStats)Entity.MaxStats;
+        public IReadOnlyStats Stats => Entity.Stats;
+        public IReadOnlyStats MaxStats => Entity.MaxStats;
         public Point2D Location => Entity.Location;
         public int Tick { get; }
 
@@ -24,7 +25,7 @@ namespace WallAI.Core.Ai
             Tick = tick;
         }
 
-        public PartialWorld2D LockRect(Rectangle2D rect) => _aiWorld2D.LockRect(rect);
+        public IWorld2D LockRect(Rectangle2D rect) => _aiWorld2D.LockRect(rect);
 
         public Random GetRandom() => new Random(_aiWorld2D.Seed + Tick);
 

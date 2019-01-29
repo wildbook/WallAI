@@ -5,10 +5,11 @@ using WallAI.Core.Helpers.Disposable;
 using WallAI.Core.Math.Geometry;
 using WallAI.Core.Tiles;
 using WallAI.Core.World.Entities;
+using WallAI.Core.World.Tiles;
 
 namespace WallAI.Core.World.Ai
 {
-    public class PartialWorld2D : IWorld2D, IReadOnlyWorld2D
+    public class PartialWorld2D : IWorld2D
     {
         private readonly IWorld2D _world2D;
         private readonly Func<Point2D, bool> _isVisible;
@@ -21,10 +22,6 @@ namespace WallAI.Core.World.Ai
             _lifetime = new CountingDisposable(lifetime);
         }
 
-        public PartialWorld2D CreateDerivedWorld2D(
-            Func<Point2D, bool> isVisible) =>
-            new PartialWorld2D(this, isVisible, _lifetime.CreateChild());
-
         public ITile2D this[Point2D point]
         {
             get
@@ -33,7 +30,7 @@ namespace WallAI.Core.World.Ai
 
                 if (!_isVisible(point))
                     throw new IndexOutOfRangeException();
-                return _world2D[point.X, point.Y];
+                return _world2D[point];
             }
             set
             {
@@ -41,20 +38,23 @@ namespace WallAI.Core.World.Ai
 
                 if (!_isVisible(point))
                     throw new IndexOutOfRangeException();
-                _world2D[point.X, point.Y] = value;
+                _world2D[point] = value;
             }
         }
 
         public int Seed => _world2D.Seed;
 
-        IReadOnlyTile2D IReadOnlyWorld2D.this[int x, int y] => this[x, y];
-        public ITile2D this[int x, int y]
-        {
-            get => this[new Point2D(x, y)];
-            set => this[new Point2D(x, y)] = value;
-        }
+        IReadOnlyTile2D IReadOnlyWorld2D.this[Point2D location] => this[location];
+
+        IEnumerable<IReadOnlyWorld2DTile2D> IReadOnlyWorld2D.TilesInRange(Circle2D circle) => _world2D.TilesInRange(circle).Cast<IReadOnlyWorld2DTile2D>();
+
+        IReadOnlyWorld2D IReadOnlyWorld2D.CreateDerivedWorld2D(Func<Point2D, bool> isVisible) => CreateDerivedWorld2D(isVisible);
+
+        public IWorld2D CreateDerivedWorld2D(Func<Point2D, bool> isVisible) => new PartialWorld2D(this, isVisible, _lifetime.CreateChild());
 
         IEnumerable<IReadOnlyWorld2DEntity> IReadOnlyWorld2D.Entities => Entities.Cast<IReadOnlyWorld2DEntity>();
+        public IEnumerable<IWorld2DTile2D> TilesInRange(Circle2D circle) => _world2D.TilesInRange(circle);
+
         public IEnumerable<IWorld2DEntity> Entities
         {
             get

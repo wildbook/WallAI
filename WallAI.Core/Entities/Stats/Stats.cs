@@ -1,6 +1,6 @@
 ﻿namespace WallAI.Core.Entities.Stats
 {
-    public class Stats : IReadOnlyStats, IStats
+    public class Stats : IStats
     {
         public bool Alive { get; set; }
         public uint Energy { get; set; }

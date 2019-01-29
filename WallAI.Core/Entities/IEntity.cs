@@ -3,10 +3,10 @@ using WallAI.Core.Entities.Stats;
 
 namespace WallAI.Core.Entities
 {
-    public interface IEntity
+    public interface IEntity : IReadOnlyEntity
     {
         IAi Ai { get; }
-        IStats Stats { get; set; }
-        IStats MaxStats { get; set; }
+        new IStats Stats { get; set; }
+        new IStats MaxStats { get; set; }
     }
 }
