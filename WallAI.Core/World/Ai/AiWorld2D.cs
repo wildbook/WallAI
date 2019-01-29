@@ -20,6 +20,8 @@ namespace WallAI.Core.World.Ai
             _locked = new ConcurrentDictionary<Guid, PartialWorld2D>();
         }
 
+        public int Seed => _w2D.Seed;
+
         public PartialWorld2D LockRect(Rectangle2D rect)
         {
             var lockId = Guid.NewGuid();
@@ -75,6 +77,8 @@ namespace WallAI.Core.World.Ai
                 _world2D[point.X, point.Y] = value;
             }
         }
+
+        public int Seed => _world2D.Seed;
 
         public ITile2D this[int x, int y]
         {

@@ -1,5 +1,4 @@
-﻿using WallAI.Core;
-using WallAI.Core.Tiles;
+﻿using WallAI.Core.Tiles;
 using WallAI.Core.World;
 
 namespace WallAI.Simulation

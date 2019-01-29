@@ -8,7 +8,7 @@ using WallAI.Simulation.Ai;
 namespace WallAI.Simulation.CUI
 {
     internal class Program
-    {
+    { 
         private static void Main(string[] args)
         {
             Console.CursorVisible = false;
@@ -19,21 +19,21 @@ namespace WallAI.Simulation.CUI
             var stats = new Stats
             {
                 Alive = true,
-                Energy = 10,
+                Energy = 25,
             };
 
             var maxStats = new Stats(stats)
             {
-                Energy = 15,
+                Energy = 30,
             };
 
-            simulation.World[0, 0].Entity = new Entity<Testing>(stats, maxStats);
+            simulation.World[12, 12].Entity = new Entity<Testing>(stats, maxStats);
 
             while (true)
             {
                 simulation.Tick();
                 Render(simulation);
-                Thread.Sleep(200);
+                Thread.Sleep(250);
             }
         }
 

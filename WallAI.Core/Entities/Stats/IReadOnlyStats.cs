@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace WallAI.Core.Entities.Stats
+﻿namespace WallAI.Core.Entities.Stats
 {
     public interface IReadOnlyStats
     {

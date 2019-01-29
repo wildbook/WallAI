@@ -11,9 +11,12 @@ namespace WallAI.Simulation.Ai
             var rand = ai.GetRandom();
 
             if (ai.Stats.Energy == 0)
+            {
                 ai.Kill();
-            else
-                ai.Move(rand.NextEnum<Direction>());
+                return;
+            }
+
+            ai.Move(rand.NextEnum<Direction>());
         }
     }
 }

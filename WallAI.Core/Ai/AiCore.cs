@@ -26,7 +26,7 @@ namespace WallAI.Core.Ai
 
         public PartialWorld2D LockRect(Rectangle2D rect) => _aiWorld2D.LockRect(rect);
 
-        public Random GetRandom() => new Random(Tick);
+        public Random GetRandom() => new Random(_aiWorld2D.Seed + Tick);
 
         public void Move(Direction direction)
         {

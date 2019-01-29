@@ -2,7 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using WallAI.Core.Internal;
+using WallAI.Core.Math.Geometry;
 using WallAI.Core.Tiles;
 using WallAI.Core.World.Entities;
 
@@ -10,10 +10,10 @@ namespace WallAI.Core.World
 {
     public class World2D : IWorld2D, IReadOnlyWorld2D
     {
-        protected readonly int Seed;
+        public int Seed { get; }
 
         private readonly IWorld2DMethods _methods;
-        internal readonly ConcurrentDictionary<Coordinate2D, ITile2D> Tiles;
+        internal readonly ConcurrentDictionary<Point2D, ITile2D> Tiles;
         
         private IEnumerable<World2DEntity> Entities
             => Tiles.Where(x => x.Value.Entity != null)
@@ -33,17 +33,28 @@ namespace WallAI.Core.World
         {
             get
             {
-                var coordinate = new Coordinate2D(x, y);
-                return Tiles.GetOrAdd(coordinate, d => _methods.GenerateTile(Seed, d.X, d.Y));
+                var coordinate = new Point2D(x, y);
+                return Tiles.TryGetValue(coordinate, out var tile)
+                    ? tile
+                    : new TemporaryTile2D(_methods.GenerateTile(Seed, x, y), z => this[x, y] = z);
             }
             set
             {
-                var coordinate = new Coordinate2D(x, y);
+                var coordinate = new Point2D(x, y);
+                var defaultTile = _methods.GenerateTile(Seed, x, y);
 
-                if (value != null)
-                    Tiles[coordinate] = value;
-                else if (!Tiles.TryRemove(coordinate, out _))
-                    throw new Exception();
+                if (Equals(defaultTile, value))
+                {
+                    if (!Tiles.TryRemove(coordinate, out _))
+                        throw new Exception("Failed to remove non-modified tile.");
+                }
+                else
+                {
+                    if (value != null)
+                        Tiles[coordinate] = value;
+                    else if (!Tiles.TryRemove(coordinate, out _))
+                        throw new Exception();
+                }
             }
         }
 
@@ -53,7 +64,7 @@ namespace WallAI.Core.World
         {
             Seed = seed;
             _methods = methods;
-            Tiles = new ConcurrentDictionary<Coordinate2D, ITile2D>();
+            Tiles = new ConcurrentDictionary<Point2D, ITile2D>();
         }
     }
 }

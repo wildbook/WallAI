@@ -6,6 +6,7 @@ namespace WallAI.Core.World
 {
     public interface IWorld2D
     {
+        int Seed { get; }
         ITile2D this[int x, int y] { get; set; }
         IEnumerable<IWorld2DEntity> Entities { get; }
     }

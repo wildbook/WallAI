@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace WallAI.Core.Enums
+﻿namespace WallAI.Core.Enums
 {
     public enum Direction
     {
