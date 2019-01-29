@@ -2,19 +2,28 @@
 using System.Threading;
 using WallAI.Core.Entities;
 using WallAI.Core.Entities.Stats;
+using WallAI.Core.Math.Geometry;
 using WallAI.Core.Tiles;
 using WallAI.Simulation.Ai;
 
 namespace WallAI.Simulation.CUI
 {
     internal class Program
-    { 
+    {
         private static void Main(string[] args)
         {
-            Console.CursorVisible = false;
-            Console.ReadLine();
+            // 2 is minimum, or the console goes haywire
+            var offsetInt = 2;
 
-            var simulation = new DemoSimulation();
+            Console.CursorVisible = false;
+
+            var simulation = new DemoSimulation(new Point2D(25, 25), 1);
+
+            var offset = new Point2D(offsetInt * 2, offsetInt);
+            var windowRect = new Rectangle2D(offset, offset + offset + new Point2D(simulation.Size.X * 2, simulation.Size.Y) + offset + new Point2D(-1, 0));
+
+            Console.SetWindowSize(windowRect.Width, windowRect.Height);
+            Console.SetBufferSize(windowRect.Width, windowRect.Height);
 
             var stats = new Stats
             {
@@ -32,53 +41,60 @@ namespace WallAI.Simulation.CUI
             while (true)
             {
                 simulation.Tick();
-                Render(simulation);
+
+                DrawRect(new Rectangle2D(offset, (simulation.Size.X) * 2 + 1, simulation.Size.Y + 1), ConsoleColor.DarkGray);
+                Render(offset + new Point2D(1, 1), simulation);
                 Thread.Sleep(250);
             }
         }
 
-        private static void Render(Simulation simulation)
+        public static void DrawRect(Rectangle2D rect, ConsoleColor color)
+        {
+            Console.SetCursorPosition(rect.X, rect.Y);
+
+            var center = new string('═', rect.Width - 1);
+
+            Console.Write($"╔{center}╗");
+
+            for (var y = rect.Y + 1; y < rect.Y2; y++)
+            {
+                Console.SetCursorPosition(rect.X, y);
+                Console.Write('║');
+
+                Console.SetCursorPosition(rect.X2, y);
+                Console.Write('║');
+            }
+
+            Console.SetCursorPosition(rect.X, rect.Y2);
+            Console.Write($"╚{center}╝");
+            Console.ResetColor();
+        }
+
+        private static void Render(Point2D offset, Simulation simulation)
         {
             var world = simulation.World;
             var size = simulation.Size;
 
             Console.BackgroundColor = ConsoleColor.Black;
-            Console.SetCursorPosition(0, 0);
-            for (var y = 0; y < size.Y; y++)
-                Console.WriteLine(new string(' ', size.X * 2));
-            Console.SetCursorPosition(0, 0);
+            Console.SetCursorPosition(offset.X, offset.Y);
 
             for (var y = 0; y < size.Y; y++)
             {
+                Console.CursorLeft = offset.X;
+
                 for (var x = 0; x < size.X; x++)
-                {
-                    var tile = world[x, y];
-                    PrintTile(tile);
-                }
+                    PrintTile(world[x, y]);
 
                 Console.CursorTop++;
-                Console.CursorLeft = 0;
             }
-
-            Console.BackgroundColor = ConsoleColor.DarkGray;
-            Console.SetCursorPosition(size.X * 2, 0);
-            for (var y = 0; y <= size.Y; y++)
-            {
-                Console.Write("  ");
-                Console.CursorTop++;
-                Console.CursorLeft -= 2;
-            }
-
-            Console.SetCursorPosition(0, size.Y);
-            Console.WriteLine(new string(' ', size.X * 2));
-            Console.ResetColor();
         }
+
         private static void PrintTile(ITile2D tile)
         {
             ConsoleColor color;
 
             if (tile.Entity == null)
-                color = ConsoleColor.Black;
+                color = ConsoleColor.DarkYellow;
             else if (tile.Entity.Stats.Alive)
                 color = ConsoleColor.White;
             else

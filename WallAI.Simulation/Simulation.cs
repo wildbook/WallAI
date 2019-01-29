@@ -8,7 +8,7 @@ namespace WallAI.Simulation
 {
     public class Simulation
     {
-        public (int X, int Y) Size => (_xSize, _ySize);
+        public Point2D Size => new Point2D(_xSize, _ySize);
 
         private readonly int _xSize;
         private readonly int _ySize;
