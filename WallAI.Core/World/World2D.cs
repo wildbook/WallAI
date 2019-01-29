@@ -14,7 +14,7 @@ namespace WallAI.Core.World
 
         private readonly IWorld2DMethods _methods;
         internal readonly ConcurrentDictionary<Point2D, ITile2D> Tiles;
-        
+
         private IEnumerable<World2DEntity> Entities
             => Tiles.Where(x => x.Value.Entity != null)
                     .Select(x => new World2DEntity(this, x.Value.Entity, x.Key.X, x.Key.Y));
@@ -66,5 +66,7 @@ namespace WallAI.Core.World
             _methods = methods;
             Tiles = new ConcurrentDictionary<Point2D, ITile2D>();
         }
+
+        public void Dispose() { }
     }
 }
