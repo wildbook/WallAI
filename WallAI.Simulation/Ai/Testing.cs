@@ -10,7 +10,7 @@ namespace WallAI.Simulation.Ai
         {
             var rand = ai.GetRandom();
             
-            using (ai.GetVisibleTiles())
+            using (ai.GetVisibleWorld())
             {
 
             }

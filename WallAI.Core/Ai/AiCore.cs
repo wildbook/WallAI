@@ -60,7 +60,7 @@ namespace WallAI.Core.Ai
 
         public void Kill() => Entity.Stats.Alive = false;
 
-        public IReadOnlyWorld2D GetVisibleTiles()
+        public IReadOnlyWorld2D GetVisibleWorld()
         {
             var visionRadius = 10;
 
