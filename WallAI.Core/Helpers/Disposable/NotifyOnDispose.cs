@@ -1,18 +1,16 @@
 ﻿using System;
 
-namespace WallAI.Core.Helpers
+namespace WallAI.Core.Helpers.Disposable
 {
-    public class NotifyOnDispose : IDisposable
+    public class NotifyOnDispose : ITrackingDisposable
     {
-        public bool Disposed;
+        public bool Disposed { get; private set; }
         private readonly Action _onDispose;
 
-        public bool ThrowIfDisposed(string name)
+        public void ThrowIfDisposed(string name)
         {
             if (Disposed)
                 throw new ObjectDisposedException(name);
-
-            return Disposed;
         }
 
         public void ThrowIfDisposed()
