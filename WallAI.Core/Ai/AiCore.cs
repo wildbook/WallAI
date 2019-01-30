@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using WallAI.Core.Ai.Vision;
 using WallAI.Core.Entities.Stats;
 using WallAI.Core.Enums;
 using WallAI.Core.Math.Geometry;
@@ -15,6 +17,7 @@ namespace WallAI.Core.Ai
         private IWorld2DEntity Entity { get; }
         public IReadOnlyStats Stats => Entity.Stats;
         public IReadOnlyStats MaxStats => Entity.MaxStats;
+        public Circle2D Vision => new Circle2D(Entity.Location, Stats.VisionRadius);
         public Point2D Location => Entity.Location;
         public int Tick { get; }
 
@@ -25,7 +28,7 @@ namespace WallAI.Core.Ai
             Tick = tick;
         }
 
-        public IWorld2D LockRect(Rectangle2D rect) => _aiWorld2D.LockRect(rect);
+        public IWorld2D LockRect(Point2D center, Rectangle2D rect) => _aiWorld2D.LockRect(center, rect);
 
         public Random GetRandom() => new Random(_aiWorld2D.Seed + Tick);
 
@@ -44,7 +47,7 @@ namespace WallAI.Core.Ai
 
             var lockRect = new Rectangle2D(Location, destinationPoint);
 
-            using (var map = LockRect(lockRect))
+            using (var map = LockRect(Point2D.Zero, lockRect))
             {
                 if (map[destinationPoint].Entity != null)
                     return new ActionStatus(ActionStatus.Status.InvalidAction, "Target cell contains an entity.");
@@ -96,7 +99,7 @@ namespace WallAI.Core.Ai
                 }
             }
         }
-
+        
         private ActionStatus DeltaEnergy(int energy)
         {
             if (Stats.Alive == false)
