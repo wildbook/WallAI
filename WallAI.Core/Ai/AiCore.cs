@@ -69,33 +69,29 @@ namespace WallAI.Core.Ai
             var lockRect = new Rectangle2D(Location - new Point2D(visionRadius, visionRadius), visionRadius * 2, visionRadius * 2);
             using (var map = LockRect(Point2D.Zero, lockRect))
             {
-                var visiblePoints = new HashSet<Point2D>();
-
-                ShadowCaster.ComputeFieldOfViewWithShadowCasting(
-                    Entity.Location.X,
-                    Entity.Location.Y,
-                    visionRadius - 1,
-                    (x, y) =>
-                    {
-                        var point = new Point2D(x, y);
-                        if (point.Equals(Entity.Location))
-                            return false;
-
-                        var tile = map[point];
-
-                        if (tile.Entity == null)
-                            return false;
-
-                        var stats = Entity.Stats;
-                        var tileStats = tile.Entity.Stats;
-                        if (tileStats.Height < stats.Height)
-                            return false;
-
-                        return tileStats.Opaque;
-                    },
-                    (x, y) => visiblePoints.Add(new Point2D(x, y)));
+                var fov = new RPAS(RPAS.Configuration.Default);
+                var visiblePoints = fov.CalculateVisibleCells(new Circle2D(Entity.Location, visionRadius - 1), x => !IsOpaque(x.X, x.Y));
 
                 return map.CreateDerivedWorld2D(Entity.Location, x => visiblePoints.Contains(x));
+
+                bool IsOpaque(int x, int y)
+                {
+                    var point = new Point2D(x, y);
+                    if (point.Equals(Entity.Location))
+                        return false;
+
+                    var tile = map[point];
+
+                    if (tile.Entity == null)
+                        return false;
+
+                    var stats = Entity.Stats;
+                    var tileStats = tile.Entity.Stats;
+                    if (tileStats.Height < stats.Height)
+                        return false;
+
+                    return tileStats.Opaque;
+                }
             }
         }
 
