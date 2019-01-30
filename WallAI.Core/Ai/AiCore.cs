@@ -1,7 +1,8 @@
 using System;
+using System.Collections.Generic;
+using WallAI.Core.Ai.Vision;
 using WallAI.Core.Entities.Stats;
 using WallAI.Core.Enums;
-using WallAI.Core.Helpers;
 using WallAI.Core.Math.Geometry;
 using WallAI.Core.Tiles;
 using WallAI.Core.World;
@@ -67,8 +68,16 @@ namespace WallAI.Core.Ai
             var lockRect = new Rectangle2D(Location - new Point2D(visionRadius, visionRadius), visionRadius * 2, visionRadius * 2);
             using (var map = LockRect(lockRect))
             {
-                var visible = map.CreateDerivedWorld2D(x => throw new NotImplementedException());
-                return visible;
+                var visiblePoints = new HashSet<Point2D>();
+
+                ShadowCaster.ComputeFieldOfViewWithShadowCasting(
+                    Entity.Location.X,
+                    Entity.Location.Y,
+                    visionRadius,
+                    (x, y) => map[new Point2D(x, y)].Entity != null,
+                    (x, y) => visiblePoints.Add(new Point2D(x, y)));
+
+                return map.CreateDerivedWorld2D(x => visiblePoints.Contains(x));
             }
         }
 
