@@ -28,7 +28,7 @@ namespace WallAI.Simulation.CUI
 
             var offset = new Point2D(offsetInt * 2, offsetInt);
             var worldOffset = offset + new Point2D(1, 1);
-            var windowRect = new Rectangle2D(offset, offset + offset + new Point2D(_simulation.Size.X * 2, _simulation.Size.Y) + offset + new Point2D(-1, 0));
+            var windowRect = new Rectangle2D(offset, offset + offset + new Point2D(_simulation.Size.X * 2, _simulation.Size.Y) + offset + new Point2D(1, 1));
 
             Console.SetWindowSize(windowRect.Width, windowRect.Height);
             Console.SetBufferSize(windowRect.Width, windowRect.Height);
