@@ -17,7 +17,7 @@ namespace WallAI.Core.Ai
 
         Random GetRandom();
         IReadOnlyWorld2D GetVisibleWorld();
-        void Move(Direction direction);
+        ActionStatus Move(Direction direction);
         void Kill();
     }
 }

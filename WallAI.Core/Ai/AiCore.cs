@@ -32,7 +32,7 @@ namespace WallAI.Core.Ai
 
         public Random GetRandom() => new Random(_aiWorld2D.Seed + Tick);
 
-        public void Move(Direction direction)
+        public ActionStatus Move(Direction direction)
         {
             var destinationPoint = Location;
 
@@ -50,13 +50,18 @@ namespace WallAI.Core.Ai
             using (var map = LockRect(Point2D.Zero, lockRect))
             {
                 if (map[destinationPoint].Entity != null)
-                    throw new DestinationContainsObjectException();
+                    return new ActionStatus(ActionStatus.Status.InvalidAction, "Target cell contains an entity.");
+                
+                var energyStatus = DeltaEnergy(-1);
 
-                var obj = map[Location];
-                map[Location] = new Tile2D();
-                map[destinationPoint] = obj;
+                if (energyStatus.Success)
+                {
+                    var obj = map[Location];
+                    map[Location] = new Tile2D();
+                    map[destinationPoint] = obj;
+                }
 
-                DeltaEnergy(-1);
+                return energyStatus;
             }
         }
 
@@ -94,21 +99,41 @@ namespace WallAI.Core.Ai
                 }
             }
         }
-
-        private void DeltaEnergy(int energy)
+        
+        private ActionStatus DeltaEnergy(int energy)
         {
             if (Stats.Alive == false)
-                throw new Exception("Entity can not spend energy while dead.");
+                return new ActionStatus(ActionStatus.Status.InvalidAction, "Entity can not spend energy while dead.");
 
             if (Stats.Energy + energy < 0)
-                throw new Exception($"Spending {-energy} energy would kill the entity.");
+                return new ActionStatus(ActionStatus.Status.InvalidAction, $"Spending {-energy} energy would kill the entity.");
 
             if (Stats.Energy + energy > MaxStats.Energy)
-                throw new Exception($"Restoring {energy} energy would over-feed the entity.");
+                return new ActionStatus(ActionStatus.Status.InvalidAction, $"Restoring {energy} energy would over-feed the entity.");
 
             Entity.Stats.Energy += (uint)energy;
+
+            return new ActionStatus(ActionStatus.Status.Success);
         }
     }
 
-    public class DestinationContainsObjectException : Exception { }
+    public readonly struct ActionStatus
+    {
+        public ActionStatus(Status result, string description = null)
+        {
+            Result = result;
+            Description = description;
+        }
+
+        public enum Status
+        {
+            Success,
+            InsufficientEnergy,
+            InvalidAction,
+        }
+
+        public readonly string Description;
+        public readonly Status Result;
+        public bool Success => Result == Status.Success;
+    }
 }
