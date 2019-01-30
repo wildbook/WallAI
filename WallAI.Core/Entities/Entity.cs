@@ -1,12 +1,12 @@
 ﻿using System;
+using System.Net.NetworkInformation;
 using System.Reflection;
 using WallAI.Core.Ai;
 using WallAI.Core.Entities.Stats;
-using WallAI.Core.Exceptions;
 
 namespace WallAI.Core.Entities
 {
-    public class Entity<T> : IEntity, IReadOnlyEntity where T : IAi, new()
+    public class Entity<T> : IEntity where T : IAi, new()
     {
         public IAi Ai { get; }
 
@@ -27,13 +27,15 @@ namespace WallAI.Core.Entities
             set => Stats = value as Stats.Stats ?? new Stats.Stats(value);
         }
 
-        public Entity(IStats stats, IStats maxStats)
+        public Entity(T ai, IStats stats, IStats maxStats)
         {
-            Ai = new T();
+            Ai = ai;
             Stats = new Stats.Stats(stats);
             MaxStats = new Stats.Stats(maxStats);
 
             Stats.EnsureNotGreaterThan(MaxStats);
         }
+
+        public Entity(IStats stats, IStats maxStats) : this(new T(), stats, maxStats) { }
     }
 }
