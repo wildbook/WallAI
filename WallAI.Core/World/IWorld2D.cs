@@ -13,6 +13,6 @@ namespace WallAI.Core.World
         new ITile2D this[Point2D location] { get; set; }
         new IEnumerable<IWorld2DEntity> Entities { get; }
         new IEnumerable<IWorld2DTile2D> TilesInRange(Circle2D circle);
-        new IWorld2D CreateDerivedWorld2D(Func<Point2D, bool> isVisible);
+        new IWorld2D CreateDerivedWorld2D(Point2D center, Func<Point2D, bool> isVisible);
     }
 }

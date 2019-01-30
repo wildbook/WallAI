@@ -4,12 +4,14 @@
     {
         public bool Alive { get; set; }
         public uint Energy { get; set; }
+        public int VisionRadius { get; set; }
 
         public Stats() { }
         public Stats(IStats stats)
         {
             Alive = stats.Alive;
             Energy = stats.Energy;
+            VisionRadius = stats.VisionRadius;
         }
     }
 }

@@ -4,5 +4,6 @@
     {
         new bool Alive { get; set; }
         new uint Energy { get; set; }
+        new int VisionRadius { get; set; }
     }
 }
