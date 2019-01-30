@@ -36,7 +36,7 @@ namespace WallAI.Simulation.CUI
             var stats = new Stats
             {
                 Alive = true,
-                Energy = 30,
+                Energy = int.MaxValue,
                 VisionRadius = 10,
                 Height = 10,
                 Opaque = true,
@@ -44,14 +44,25 @@ namespace WallAI.Simulation.CUI
 
             var maxStats = new Stats(stats)
             {
-                Energy = 30,
+                Energy = int.MaxValue,
                 VisionRadius = 10,
             };
 
-            _simulation.World[new Point2D(12, 12)].Entity = new Entity<Testing>(stats, maxStats);
-            _simulation.World[new Point2D(14, 14)].Entity = new Entity<Testing>(new Stats(stats) { Energy = 5, VisionRadius = 3 }, maxStats);
-            _simulation.World[new Point2D(16, 16)].Entity = new Entity<Testing>(new Stats(stats) { Energy = 5, VisionRadius = 3 }, maxStats);
-            _simulation.World[new Point2D(17, 18)].Entity = new Entity<Testing>(new Stats(stats) { Energy = 5, VisionRadius = 3 }, maxStats);
+            var fastStats = new Stats(stats)
+            {
+                Energy = 5,
+                VisionRadius = 3
+            };
+
+            _simulation.World[new Point2D(10, 10)].Entity = new Entity<Testing>(stats, maxStats);
+            _simulation.World[new Point2D(5, 5)].Entity = new Entity<Testing>(fastStats, maxStats);
+            _simulation.World[new Point2D(8, 8)].Entity = new Entity<Testing>(fastStats, maxStats);
+            _simulation.World[new Point2D(15, 15)].Entity = new Entity<Testing>(fastStats, maxStats);
+            _simulation.World[new Point2D(12, 12)].Entity = new Entity<Testing>(fastStats, maxStats);
+            _simulation.World[new Point2D(15, 5)].Entity = new Entity<Testing>(fastStats, maxStats);
+            _simulation.World[new Point2D(8, 12)].Entity = new Entity<Testing>(fastStats, maxStats);
+            _simulation.World[new Point2D(5, 15)].Entity = new Entity<Testing>(fastStats, maxStats);
+            _simulation.World[new Point2D(12, 8)].Entity = new Entity<Testing>(fastStats, maxStats);
 
             while (true)
             {
@@ -60,7 +71,7 @@ namespace WallAI.Simulation.CUI
                 DrawRect(new Rectangle2D(offset, (_simulation.Size.X) * 2 + 1, _simulation.Size.Y + 1), ConsoleColor.DarkGray);
                 var visionMap = CalculateVisionMap(_simulation.World.Entities);
                 Render(worldOffset, visionMap, _simulation);
-                Thread.Sleep(250);
+                Thread.Sleep(100);
             }
         }
 
