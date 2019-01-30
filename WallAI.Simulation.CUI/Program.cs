@@ -3,13 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using WallAI.Core.Ai;
-using WallAI.Core.Entities;
-using WallAI.Core.Entities.Stats;
 using WallAI.Core.Math.Geometry;
 using WallAI.Core.Tiles;
 using WallAI.Core.World.Ai;
 using WallAI.Core.World.Entities;
-using WallAI.Simulation.Ai;
 
 namespace WallAI.Simulation.CUI
 {
@@ -24,7 +21,7 @@ namespace WallAI.Simulation.CUI
 
             Console.CursorVisible = false;
 
-            _simulation = new DemoSimulation(new Point2D(25, 25), 1);
+            _simulation = new DemoSimulation(new Point2D(40, 40), 1);
 
             var offset = new Point2D(offsetInt * 2, offsetInt);
             var worldOffset = offset + new Point2D(1, 1);
@@ -32,37 +29,6 @@ namespace WallAI.Simulation.CUI
 
             Console.SetWindowSize(windowRect.Width, windowRect.Height);
             Console.SetBufferSize(windowRect.Width, windowRect.Height);
-
-            var stats = new Stats
-            {
-                Alive = true,
-                Energy = int.MaxValue,
-                VisionRadius = 10,
-                Height = 10,
-                Opaque = true,
-            };
-
-            var maxStats = new Stats(stats)
-            {
-                Energy = int.MaxValue,
-                VisionRadius = 10,
-            };
-
-            var fastStats = new Stats(stats)
-            {
-                Energy = 5,
-                VisionRadius = 3
-            };
-
-            _simulation.World[new Point2D(10, 10)].Entity = new Entity<Testing>(stats, maxStats);
-            _simulation.World[new Point2D(5, 5)].Entity = new Entity<Testing>(fastStats, maxStats);
-            _simulation.World[new Point2D(8, 8)].Entity = new Entity<Testing>(fastStats, maxStats);
-            _simulation.World[new Point2D(15, 15)].Entity = new Entity<Testing>(fastStats, maxStats);
-            _simulation.World[new Point2D(12, 12)].Entity = new Entity<Testing>(fastStats, maxStats);
-            _simulation.World[new Point2D(15, 5)].Entity = new Entity<Testing>(fastStats, maxStats);
-            _simulation.World[new Point2D(8, 12)].Entity = new Entity<Testing>(fastStats, maxStats);
-            _simulation.World[new Point2D(5, 15)].Entity = new Entity<Testing>(fastStats, maxStats);
-            _simulation.World[new Point2D(12, 8)].Entity = new Entity<Testing>(fastStats, maxStats);
 
             while (true)
             {
