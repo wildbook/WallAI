@@ -46,13 +46,13 @@ namespace WallAI.Core.World.Ai
 
         IReadOnlyTile2D IReadOnlyWorld2D.this[Point2D location] => this[location];
 
-        IEnumerable<IReadOnlyWorld2DTile2D> IReadOnlyWorld2D.TilesInRange(Circle2D circle) => _world2D.TilesInRange(circle).Cast<IReadOnlyWorld2DTile2D>();
+        IEnumerable<IReadOnlyWorld2DTile2D> IReadOnlyWorld2D.TilesInRange(Circle2D circle) => _world2D.TilesInRange(circle);
 
         IReadOnlyWorld2D IReadOnlyWorld2D.CreateDerivedWorld2D(Func<Point2D, bool> isVisible) => CreateDerivedWorld2D(isVisible);
 
         public IWorld2D CreateDerivedWorld2D(Func<Point2D, bool> isVisible) => new PartialWorld2D(this, isVisible, _lifetime.CreateChild());
 
-        IEnumerable<IReadOnlyWorld2DEntity> IReadOnlyWorld2D.Entities => Entities.Cast<IReadOnlyWorld2DEntity>();
+        IEnumerable<IReadOnlyWorld2DEntity> IReadOnlyWorld2D.Entities => Entities;
         public IEnumerable<IWorld2DTile2D> TilesInRange(Circle2D circle) => _world2D.TilesInRange(circle);
 
         public IEnumerable<IWorld2DEntity> Entities
