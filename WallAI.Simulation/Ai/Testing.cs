@@ -1,4 +1,5 @@
-﻿using WallAI.Core.Ai;
+﻿using System;
+using WallAI.Core.Ai;
 using WallAI.Core.Enums;
 using WallAI.Core.Helpers.Extensions;
 
@@ -8,10 +9,11 @@ namespace WallAI.Simulation.Ai
     {
         public void Tick(IAiCore ai)
         {
-            var rand = ai.GetRandom();
+            var rand = new Random();
             
-            using (ai.GetVisibleWorld())
+            using (var world = ai.GetVisibleWorld())
             {
+                var tiles = world.TilesInRange(ai.Vision);
 
             }
 

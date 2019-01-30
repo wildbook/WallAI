@@ -17,6 +17,7 @@ namespace WallAI.Core.Ai
         private IWorld2DEntity Entity { get; }
         public IReadOnlyStats Stats => Entity.Stats;
         public IReadOnlyStats MaxStats => Entity.MaxStats;
+        public Circle2D Vision => new Circle2D(Entity.Location, Stats.VisionRadius);
         public Point2D Location => Entity.Location;
         public int Tick { get; }
 
@@ -27,7 +28,7 @@ namespace WallAI.Core.Ai
             Tick = tick;
         }
 
-        public IWorld2D LockRect(Rectangle2D rect) => _aiWorld2D.LockRect(rect);
+        public IWorld2D LockRect(Point2D center, Rectangle2D rect) => _aiWorld2D.LockRect(center, rect);
 
         public Random GetRandom() => new Random(_aiWorld2D.Seed + Tick);
 
@@ -46,7 +47,7 @@ namespace WallAI.Core.Ai
 
             var lockRect = new Rectangle2D(Location, destinationPoint);
 
-            using (var map = LockRect(lockRect))
+            using (var map = LockRect(Point2D.Zero, lockRect))
             {
                 if (map[destinationPoint].Entity != null)
                     throw new DestinationContainsObjectException();
@@ -63,10 +64,10 @@ namespace WallAI.Core.Ai
 
         public IReadOnlyWorld2D GetVisibleWorld()
         {
-            var visionRadius = 10;
+            var visionRadius = Stats.VisionRadius;
 
             var lockRect = new Rectangle2D(Location - new Point2D(visionRadius, visionRadius), visionRadius * 2, visionRadius * 2);
-            using (var map = LockRect(lockRect))
+            using (var map = LockRect(Point2D.Zero, lockRect))
             {
                 var visiblePoints = new HashSet<Point2D>();
 
@@ -77,7 +78,7 @@ namespace WallAI.Core.Ai
                     (x, y) => map[new Point2D(x, y)].Entity != null,
                     (x, y) => visiblePoints.Add(new Point2D(x, y)));
 
-                return map.CreateDerivedWorld2D(x => visiblePoints.Contains(x));
+                return map.CreateDerivedWorld2D(Entity.Location, x => visiblePoints.Contains(x));
             }
         }
 

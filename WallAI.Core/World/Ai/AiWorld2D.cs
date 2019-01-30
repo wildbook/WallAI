@@ -18,11 +18,11 @@ namespace WallAI.Core.World.Ai
 
         public int Seed => _w2D.Seed;
 
-        public IWorld2D LockRect(Rectangle2D rect)
+        public IWorld2D LockRect(Point2D center, Rectangle2D rect)
         {
             var lockId = Guid.NewGuid();
             var lifetime = new NotifyOnDispose(Unlock);
-            var partial = new PartialWorld2D(_w2D, rect.ContainsPoint, lifetime);
+            var partial = new PartialWorld2D(_w2D, center, rect.ContainsPoint, lifetime);
 
             if (_locked.TryAdd(lockId, partial))
                 return partial;
