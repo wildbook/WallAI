@@ -2,7 +2,7 @@
 
 namespace WallAI.Core.Helpers.Disposable
 {
-    interface ITrackingDisposable : IDisposable
+    public interface ITrackingDisposable : IDisposable
     {
         bool Disposed { get; }
         void ThrowIfDisposed();

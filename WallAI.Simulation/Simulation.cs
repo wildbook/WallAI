@@ -12,13 +12,13 @@ namespace WallAI.Simulation
 
         private readonly int _xSize;
         private readonly int _ySize;
-        private int _tick;
+        public int CurrentTick { get; protected set; }
 
         public readonly IWorld2D World;
 
         public Simulation(IWorld2DMethods methods, int seed, int xSize, int ySize)
         {
-            _tick = 0;
+            CurrentTick = 0;
             _xSize = xSize;
             _ySize = ySize;
             World = WrappingWorld2D.Create(methods, new Point2D(xSize, ySize), seed);
@@ -29,9 +29,9 @@ namespace WallAI.Simulation
             var aiWorld = new AiWorld2D(World);
 
             foreach (var entity in World.Entities.Where(x => x.Stats.Alive).ToArray())
-                entity.Ai.Tick(new AiCore(aiWorld, entity, _tick));
+                entity.Ai.Tick(new AiCore(aiWorld, entity, CurrentTick));
 
-            _tick++;
+            CurrentTick++;
         }
     }
 }

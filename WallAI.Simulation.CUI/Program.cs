@@ -1,26 +1,34 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
+using WallAI.Core.Ai;
 using WallAI.Core.Entities;
 using WallAI.Core.Entities.Stats;
 using WallAI.Core.Math.Geometry;
 using WallAI.Core.Tiles;
+using WallAI.Core.World.Ai;
+using WallAI.Core.World.Entities;
 using WallAI.Simulation.Ai;
 
 namespace WallAI.Simulation.CUI
 {
     internal class Program
     {
-        private static void Main(string[] args)
+        private static DemoSimulation _simulation;
+
+        private static void Main()
         {
             // 2 is minimum, or the console goes haywire
             var offsetInt = 2;
 
             Console.CursorVisible = false;
 
-            var simulation = new DemoSimulation(new Point2D(25, 25), 1);
+            _simulation = new DemoSimulation(new Point2D(25, 25), 1);
 
             var offset = new Point2D(offsetInt * 2, offsetInt);
-            var windowRect = new Rectangle2D(offset, offset + offset + new Point2D(simulation.Size.X * 2, simulation.Size.Y) + offset + new Point2D(-1, 0));
+            var worldOffset = offset + new Point2D(1, 1);
+            var windowRect = new Rectangle2D(offset, offset + offset + new Point2D(_simulation.Size.X * 2, _simulation.Size.Y) + offset + new Point2D(1, 1));
 
             Console.SetWindowSize(windowRect.Width, windowRect.Height);
             Console.SetBufferSize(windowRect.Width, windowRect.Height);
@@ -28,24 +36,51 @@ namespace WallAI.Simulation.CUI
             var stats = new Stats
             {
                 Alive = true,
-                Energy = 25,
+                Energy = 30,
+                VisionRadius = 10,
+                Height = 10,
+                Opaque = true,
             };
 
             var maxStats = new Stats(stats)
             {
                 Energy = 30,
+                VisionRadius = 10,
             };
 
-            simulation.World[12, 12].Entity = new Entity<Testing>(stats, maxStats);
+            _simulation.World[new Point2D(12, 12)].Entity = new Entity<Testing>(stats, maxStats);
+            _simulation.World[new Point2D(14, 14)].Entity = new Entity<Testing>(new Stats(stats) { Energy = 5, VisionRadius = 3 }, maxStats);
+            _simulation.World[new Point2D(16, 16)].Entity = new Entity<Testing>(new Stats(stats) { Energy = 5, VisionRadius = 3 }, maxStats);
+            _simulation.World[new Point2D(17, 18)].Entity = new Entity<Testing>(new Stats(stats) { Energy = 5, VisionRadius = 3 }, maxStats);
 
             while (true)
             {
-                simulation.Tick();
+                _simulation.Tick();
 
-                DrawRect(new Rectangle2D(offset, (simulation.Size.X) * 2 + 1, simulation.Size.Y + 1), ConsoleColor.DarkGray);
-                Render(offset + new Point2D(1, 1), simulation);
+                DrawRect(new Rectangle2D(offset, (_simulation.Size.X) * 2 + 1, _simulation.Size.Y + 1), ConsoleColor.DarkGray);
+                var visionMap = CalculateVisionMap(_simulation.World.Entities);
+                Render(worldOffset, visionMap, _simulation);
                 Thread.Sleep(250);
             }
+        }
+
+        private static HashSet<Point2D> CalculateVisionMap(IEnumerable<IWorld2DEntity> worldEntities)
+        {
+            var visionMap = new HashSet<Point2D>();
+
+            foreach (var entity in worldEntities.Where(x => x.Stats.Alive).ToArray())
+            {
+                var core = new AiCore(new AiWorld2D(entity.World), entity, _simulation.CurrentTick);
+                using (var map = core.GetVisibleWorld())
+                {
+                    var tiles = map.TilesInRange(new Circle2D(entity.Location, core.Stats.VisionRadius));
+
+                    foreach (var tile in tiles)
+                        visionMap.Add(tile.Location);
+                }
+            }
+
+            return visionMap;
         }
 
         public static void DrawRect(Rectangle2D rect, ConsoleColor color)
@@ -70,7 +105,7 @@ namespace WallAI.Simulation.CUI
             Console.ResetColor();
         }
 
-        private static void Render(Point2D offset, Simulation simulation)
+        private static void Render(Point2D offset, HashSet<Point2D> visionMap, Simulation simulation)
         {
             var world = simulation.World;
             var size = simulation.Size;
@@ -83,25 +118,31 @@ namespace WallAI.Simulation.CUI
                 Console.CursorLeft = offset.X;
 
                 for (var x = 0; x < size.X; x++)
-                    PrintTile(world[x, y]);
+                {
+                    var point = new Point2D(x, y);
+                    PrintTile(world[point], visionMap.Contains(point));
+                }
 
                 Console.CursorTop++;
             }
         }
 
-        private static void PrintTile(ITile2D tile)
+        private static void PrintTile(ITile2D tile, bool vision)
         {
             ConsoleColor color;
 
             if (tile.Entity == null)
-                color = ConsoleColor.DarkYellow;
+                color = vision ? ConsoleColor.DarkGray : ConsoleColor.Black;
             else if (tile.Entity.Stats.Alive)
-                color = ConsoleColor.White;
+                color = vision ? ConsoleColor.White : ConsoleColor.Gray;
             else
-                color = ConsoleColor.DarkRed;
+                color = vision ? ConsoleColor.Red : ConsoleColor.DarkRed;
 
             Console.BackgroundColor = color;
-            Console.Write("  ");
+            Console.ForegroundColor = ConsoleColor.DarkGray;
+
+            Console.Write(tile.Entity == null ? "░░" : "  ");
+
             Console.ResetColor();
         }
     }

@@ -3,9 +3,9 @@ using WallAI.Core.Math.Geometry;
 
 namespace WallAI.Core.World.Entities
 {
-    public interface IWorld2DEntity : IEntity
+    public interface IWorld2DEntity : IReadOnlyWorld2DEntity, IEntity
     {
-        Point2D Location { get; }
-        IWorld2D World { get; }
+        new Point2D Location { get; }
+        new IWorld2D World { get; }
     }
 }

@@ -7,10 +7,10 @@ namespace WallAI.Simulation
     public class DemoSimulation : Simulation
     {
         public DemoSimulation(Point2D size, int seed = 0) : base(new World2DMethods(), seed, size.X, size.Y) { }
-        
+
         internal class World2DMethods : IWorld2DMethods
         {
-            public ITile2D GenerateTile(int seed, int x, int y) => new Tile2D();
+            public ITile2D GenerateTile(int seed, Point2D location) => new Tile2D();
         }
     }
 }

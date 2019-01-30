@@ -1,8 +1,11 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
+using WallAI.Core.Ai.Vision;
 using WallAI.Core.Entities.Stats;
 using WallAI.Core.Enums;
 using WallAI.Core.Math.Geometry;
 using WallAI.Core.Tiles;
+using WallAI.Core.World;
 using WallAI.Core.World.Ai;
 using WallAI.Core.World.Entities;
 
@@ -12,8 +15,9 @@ namespace WallAI.Core.Ai
     {
         private readonly AiWorld2D _aiWorld2D;
         private IWorld2DEntity Entity { get; }
-        public IReadOnlyStats Stats => (IReadOnlyStats)Entity.Stats;
-        public IReadOnlyStats MaxStats => (IReadOnlyStats)Entity.MaxStats;
+        public IReadOnlyStats Stats => Entity.Stats;
+        public IReadOnlyStats MaxStats => Entity.MaxStats;
+        public Circle2D Vision => new Circle2D(Entity.Location, Stats.VisionRadius);
         public Point2D Location => Entity.Location;
         public int Tick { get; }
 
@@ -24,11 +28,11 @@ namespace WallAI.Core.Ai
             Tick = tick;
         }
 
-        public PartialWorld2D LockRect(Rectangle2D rect) => _aiWorld2D.LockRect(rect);
+        public IWorld2D LockRect(Point2D center, Rectangle2D rect) => _aiWorld2D.LockRect(center, rect);
 
         public Random GetRandom() => new Random(_aiWorld2D.Seed + Tick);
 
-        public void Move(Direction direction)
+        public ActionStatus Move(Direction direction)
         {
             var destinationPoint = Location;
 
@@ -43,35 +47,93 @@ namespace WallAI.Core.Ai
 
             var lockRect = new Rectangle2D(Location, destinationPoint);
 
-            using (var map = LockRect(lockRect))
+            using (var map = LockRect(Point2D.Zero, lockRect))
             {
                 if (map[destinationPoint].Entity != null)
-                    throw new DestinationContainsObjectException();
+                    return new ActionStatus(ActionStatus.Status.InvalidAction, "Target cell contains an entity.");
+                
+                var energyStatus = DeltaEnergy(-1);
 
-                var obj = map[Location];
-                map[Location] = new Tile2D();
-                map[destinationPoint] = obj;
+                if (energyStatus.Success)
+                {
+                    var obj = map[Location];
+                    map[Location] = new Tile2D();
+                    map[destinationPoint] = obj;
+                }
 
-                DeltaEnergy(-1);
+                return energyStatus;
             }
         }
 
         public void Kill() => Entity.Stats.Alive = false;
 
-        private void DeltaEnergy(int energy)
+        public IReadOnlyWorld2D GetVisibleWorld()
+        {
+            var visionRadius = Stats.VisionRadius;
+
+            var lockRect = new Rectangle2D(Location - new Point2D(visionRadius, visionRadius), visionRadius * 2, visionRadius * 2);
+            using (var map = LockRect(Point2D.Zero, lockRect))
+            {
+                var fov = new RPAS(RPAS.Configuration.Default);
+                var visiblePoints = fov.CalculateVisibleCells(new Circle2D(Entity.Location, visionRadius - 1), x => !IsOpaque(x.X, x.Y));
+
+                return map.CreateDerivedWorld2D(Entity.Location, x => visiblePoints.Contains(x));
+
+                bool IsOpaque(int x, int y)
+                {
+                    var point = new Point2D(x, y);
+                    if (point.Equals(Entity.Location))
+                        return false;
+
+                    var tile = map[point];
+
+                    if (tile.Entity == null)
+                        return false;
+
+                    var stats = Entity.Stats;
+                    var tileStats = tile.Entity.Stats;
+                    if (tileStats.Height < stats.Height)
+                        return false;
+
+                    return tileStats.Opaque;
+                }
+            }
+        }
+        
+        private ActionStatus DeltaEnergy(int energy)
         {
             if (Stats.Alive == false)
-                throw new Exception("Entity can not spend energy while dead.");
+                return new ActionStatus(ActionStatus.Status.InvalidAction, "Entity can not spend energy while dead.");
 
             if (Stats.Energy + energy < 0)
-                throw new Exception($"Spending {-energy} energy would kill the entity.");
+                return new ActionStatus(ActionStatus.Status.InvalidAction, $"Spending {-energy} energy would kill the entity.");
 
             if (Stats.Energy + energy > MaxStats.Energy)
-                throw new Exception($"Restoring {energy} energy would over-feed the entity.");
+                return new ActionStatus(ActionStatus.Status.InvalidAction, $"Restoring {energy} energy would over-feed the entity.");
 
             Entity.Stats.Energy += (uint)energy;
+
+            return new ActionStatus(ActionStatus.Status.Success);
         }
     }
 
-    public class DestinationContainsObjectException : Exception { }
+    public readonly struct ActionStatus
+    {
+        public ActionStatus(Status result, string description = null)
+        {
+            Result = result;
+            Description = description;
+        }
+
+        public enum Status
+        {
+            Success,
+            InsufficientEnergy,
+            InvalidAction,
+        }
+
+        public readonly string Description;
+        public readonly Status Result;
+        public bool Success => Result == Status.Success;
+    }
 }

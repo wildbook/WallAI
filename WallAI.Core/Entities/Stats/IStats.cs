@@ -1,8 +1,11 @@
 ﻿namespace WallAI.Core.Entities.Stats
 {
-    public interface IStats
+    public interface IStats : IReadOnlyStats
     {
-        bool Alive { get; set; }
-        uint Energy { get; set; }
+        new bool Alive { get; set; }
+        new uint Energy { get; set; }
+        new uint Height { get; set; }
+        new bool Opaque { get; set; }
+        new byte VisionRadius { get; set; }
     }
 }

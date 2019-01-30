@@ -5,13 +5,13 @@ using WallAI.Core.Math.Geometry;
 
 namespace WallAI.Core.World.Entities
 {
-    internal class World2DEntity : IWorld2DEntity, IReadOnlyWorld2DEntity
+    internal class World2DEntity : IWorld2DEntity
     {
         public IAi Ai => _entity.Ai;
 
-        IReadOnlyWorld2D IReadOnlyWorld2DEntity.World => (IReadOnlyWorld2D)_world;
-        IReadOnlyStats IReadOnlyEntity.MaxStats => (IReadOnlyStats)_entity.MaxStats;
-        IReadOnlyStats IReadOnlyEntity.Stats => (IReadOnlyStats)_entity.Stats;
+        IReadOnlyWorld2D IReadOnlyWorld2DEntity.World => _world;
+        IReadOnlyStats IReadOnlyEntity.MaxStats => _entity.MaxStats;
+        IReadOnlyStats IReadOnlyEntity.Stats => _entity.Stats;
 
         IWorld2D IWorld2DEntity.World => _world;
 
@@ -38,7 +38,5 @@ namespace WallAI.Core.World.Entities
         }
 
         public Point2D Location { get; }
-
-        public IReadOnlyEntity Entity => this;
     }
 }
