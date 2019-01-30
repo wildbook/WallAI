@@ -10,7 +10,8 @@ namespace WallAI.Core.Ai
         IReadOnlyStats MaxStats { get; }
 
         Random GetRandom();
-        void Move(Direction direction);
+        IReadOnlyWorld2D GetVisibleWorld();
+        ActionStatus Move(Direction direction);
         void Kill();
     }
 }
