@@ -3,13 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using WallAI.Core.Ai;
-using WallAI.Core.Entities;
-using WallAI.Core.Entities.Stats;
 using WallAI.Core.Math.Geometry;
 using WallAI.Core.Tiles;
 using WallAI.Core.World.Ai;
 using WallAI.Core.World.Entities;
-using WallAI.Simulation.Ai;
 
 namespace WallAI.Simulation.CUI
 {
@@ -24,7 +21,7 @@ namespace WallAI.Simulation.CUI
 
             Console.CursorVisible = false;
 
-            _simulation = new DemoSimulation(new Point2D(25, 25), 1);
+            _simulation = new DemoSimulation(new Point2D(40, 40), 1);
 
             var offset = new Point2D(offsetInt * 2, offsetInt);
             var worldOffset = offset + new Point2D(1, 1);
@@ -33,26 +30,6 @@ namespace WallAI.Simulation.CUI
             Console.SetWindowSize(windowRect.Width, windowRect.Height);
             Console.SetBufferSize(windowRect.Width, windowRect.Height);
 
-            var stats = new Stats
-            {
-                Alive = true,
-                Energy = 30,
-                VisionRadius = 10,
-                Height = 10,
-                Opaque = true,
-            };
-
-            var maxStats = new Stats(stats)
-            {
-                Energy = 30,
-                VisionRadius = 10,
-            };
-
-            _simulation.World[new Point2D(12, 12)].Entity = new Entity<Testing>(stats, maxStats);
-            _simulation.World[new Point2D(14, 14)].Entity = new Entity<Testing>(new Stats(stats) { Energy = 5, VisionRadius = 3 }, maxStats);
-            _simulation.World[new Point2D(16, 16)].Entity = new Entity<Testing>(new Stats(stats) { Energy = 5, VisionRadius = 3 }, maxStats);
-            _simulation.World[new Point2D(17, 18)].Entity = new Entity<Testing>(new Stats(stats) { Energy = 5, VisionRadius = 3 }, maxStats);
-
             while (true)
             {
                 _simulation.Tick();
@@ -60,7 +37,7 @@ namespace WallAI.Simulation.CUI
                 DrawRect(new Rectangle2D(offset, (_simulation.Size.X) * 2 + 1, _simulation.Size.Y + 1), ConsoleColor.DarkGray);
                 var visionMap = CalculateVisionMap(_simulation.World.Entities);
                 Render(worldOffset, visionMap, _simulation);
-                Thread.Sleep(250);
+                Thread.Sleep(100);
             }
         }
 

@@ -10,12 +10,6 @@ namespace WallAI.Simulation.Ai
         public void Tick(IAiCore ai)
         {
             var rand = new Random();
-            
-            using (var world = ai.GetVisibleWorld())
-            {
-                var tiles = world.TilesInRange(ai.Vision);
-
-            }
 
             if (ai.Stats.Energy == 0)
             {
@@ -23,7 +17,7 @@ namespace WallAI.Simulation.Ai
                 return;
             }
 
-            ai.Move(rand.NextEnum<Direction>());
+            while(!ai.Move(rand.NextEnum<Direction>()).Success);
         }
     }
 }

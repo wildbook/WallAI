@@ -106,7 +106,7 @@ namespace WallAI.Core.Ai.Vision
 
         // Parameters quad_x, quad_y should only be 1 or -1. The combination of the two determines the quadrant.
         // Returns a set of (x, y) tuples.
-        HashSet<Point2D> VisibleCellsInQuadrantFrom(int xCenter, int yCenter, int quadX, int quadY, int radius, Func<Point2D, bool> funcTransparent)
+        private HashSet<Point2D> VisibleCellsInQuadrantFrom(int xCenter, int yCenter, int quadX, int quadY, int radius, Func<Point2D, bool> funcTransparent)
         {
             var cells = VisibleCellsInOctantFrom(xCenter, yCenter, quadX, quadY, radius, funcTransparent, true);
             cells.UnionWith(VisibleCellsInOctantFrom(xCenter, yCenter, quadX, quadY, radius, funcTransparent, false));
@@ -115,7 +115,7 @@ namespace WallAI.Core.Ai.Vision
 
         // Returns a set of (x, y) typles.
         // Utilizes the NOT_VISIBLE_BLOCKS_VISION variable.
-        HashSet<Point2D> VisibleCellsInOctantFrom(int xCenter, int yCenter, int quadX, int quadY, int radius, Func<Point2D, bool> funcTransparent, bool isVertical)
+        private HashSet<Point2D> VisibleCellsInOctantFrom(int xCenter, int yCenter, int quadX, int quadY, int radius, Func<Point2D, bool> funcTransparent, bool isVertical)
         {
             var iteration = 1;
             var visibleCells = new HashSet<Point2D>();
@@ -161,21 +161,21 @@ namespace WallAI.Core.Ai.Vision
             return visibleCells;
         }
 
-        Point2D CellAt(int xCenter, int yCenter, int quadX, int quadY, int step, int iteration, bool isVertical)
+        private Point2D CellAt(int xCenter, int yCenter, int quadX, int quadY, int step, int iteration, bool isVertical)
         {
             if (isVertical)
                 return new Point2D(xCenter + step * quadX, yCenter + iteration * quadY);
             return new Point2D(xCenter + iteration * quadX, yCenter + step * quadY);
         }
 
-        bool CellInRadius(int xCenter, int yCenter, Point2D cell, int radius)
+        private bool CellInRadius(int xCenter, int yCenter, Point2D cell, int radius)
         {
             var cellDistance = System.Math.Sqrt((xCenter - cell.X) * (xCenter - cell.X) +
                                                  (yCenter - cell.Y) * (yCenter - cell.Y));
             return cellDistance <= radius + CurrentConfiguration.RadiusFudge;
         }
 
-        bool CellIsVisible(CellAngles cellAngles, IEnumerable<CellAngles> obstructions)
+        private bool CellIsVisible(CellAngles cellAngles, IEnumerable<CellAngles> obstructions)
         {
             var nearVisible = true;
             var centerVisible = true;

@@ -27,7 +27,7 @@ namespace WallAI.Core.World
             {
                 for (var y = -circle.Radius; y < circle.Radius * 2; y++)
                 {
-                    var point = circle.Origin + new Point2D((int)x, (int)y);
+                    var point = circle.Origin + new Point2D(x, y);
                     if (circle.ContainsPoint(point))
                         yield return new World2DTile2D(this[point], point, this);
                 }
@@ -55,26 +55,32 @@ namespace WallAI.Core.World
         {
             get
             {
-                return Tiles.TryGetValue(coordinate, out var tile)
-                    ? tile
-                    : new TemporaryTile2D(_methods.GenerateTile(Seed, coordinate), z => this[coordinate] = z);
+                if (Tiles.TryGetValue(coordinate, out var tile))
+                    return tile;
+
+                var generatedTile = _methods.GenerateTile(Seed, coordinate);
+
+                //if (generatedTile.Entity == null)
+                //    return new TemporaryTile2D(generatedTile, z => this[coordinate] = z);
+
+                return this[coordinate] = generatedTile;
             }
             set
             {
-                var defaultTile = _methods.GenerateTile(Seed, coordinate);
-
-                if (Equals(defaultTile, value))
-                {
-                    if (!Tiles.TryRemove(coordinate, out _))
-                        throw new Exception("Failed to remove non-modified tile.");
-                }
-                else
-                {
-                    if (value != null)
-                        Tiles[coordinate] = value;
-                    else if (!Tiles.TryRemove(coordinate, out _))
-                        throw new Exception();
-                }
+                //var defaultTile = _methods.GenerateTile(Seed, coordinate);
+                //
+                //if (defaultTile.Entity == null && Equals(defaultTile, value))
+                //{
+                //    if (!Tiles.TryRemove(coordinate, out _))
+                //        throw new Exception("Failed to remove non-modified tile.");
+                //}
+                //else
+                //{
+                if (value != null)
+                    Tiles[coordinate] = value;
+                else if (!Tiles.TryRemove(coordinate, out _))
+                    throw new Exception();
+                //}
             }
         }
 
