@@ -7,10 +7,7 @@ namespace WallAI.Core.Tiles
     {
         public IEntity Entity { get; set; }
 
-        public Tile2D(IEntity entity = null)
-        {
-
-        }
+        public Tile2D(IEntity entity = null) => Entity = entity;
 
         public bool Equals(Tile2D other)
         {
