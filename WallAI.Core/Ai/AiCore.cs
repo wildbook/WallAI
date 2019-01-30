@@ -106,7 +106,7 @@ namespace WallAI.Core.Ai
                 return new ActionStatus(ActionStatus.Status.InvalidAction, "Entity can not spend energy while dead.");
 
             if (Stats.Energy + energy < 0)
-                return new ActionStatus(ActionStatus.Status.InvalidAction, $"Spending {-energy} energy would kill the entity.");
+                return new ActionStatus(ActionStatus.Status.InsufficientEnergy, $"Spending {-energy} energy would kill the entity.");
 
             if (Stats.Energy + energy > MaxStats.Energy)
                 return new ActionStatus(ActionStatus.Status.InvalidAction, $"Restoring {energy} energy would over-feed the entity.");
