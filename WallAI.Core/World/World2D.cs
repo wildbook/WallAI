@@ -27,7 +27,7 @@ namespace WallAI.Core.World
             {
                 for (var y = -circle.Radius; y < circle.Radius * 2; y++)
                 {
-                    var point = circle.Origin + new Point2D(x, y);
+                    var point = circle.Origin + new Point2D((int)x, (int)y);
                     if (circle.ContainsPoint(point))
                         yield return new World2DTile2D(this[point], point, this);
                 }

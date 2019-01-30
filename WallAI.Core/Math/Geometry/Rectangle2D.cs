@@ -6,7 +6,6 @@ namespace WallAI.Core.Math.Geometry
     {
         private readonly Point2D _origin;
 
-
         public Rectangle2D(Point2D first, Point2D second)
         {
             _origin = new Point2D(System.Math.Min(first.X, second.X), System.Math.Min(first.Y, second.Y));

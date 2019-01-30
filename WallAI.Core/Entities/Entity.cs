@@ -33,33 +33,7 @@ namespace WallAI.Core.Entities
             Stats = new Stats.Stats(stats);
             MaxStats = new Stats.Stats(maxStats);
 
-            foreach (var property in Stats.GetType().GetProperties(BindingFlags.FlattenHierarchy | BindingFlags.Public | BindingFlags.Instance))
-            {
-                var prop = typeof(IStats).GetProperty(property.Name);
-                var statsVal = prop.GetValue(Stats);
-                var maxStatsVal = prop.GetValue(MaxStats);
-
-                if (statsVal.GetType() != maxStatsVal.GetType())
-                    throw new Exception($"Stat {prop.Name} does not match type of MaxStat.");
-
-                switch (statsVal)
-                {
-                    case bool sv when maxStatsVal is bool msv:
-                        if (sv && !msv) throw new StatOutOfRangeException<bool>(prop.Name, true, false);
-                        break;
-
-                    case int sv when maxStatsVal is int msv:
-                        if (sv < msv) throw new StatOutOfRangeException<int>(prop.Name, sv, msv);
-                        break;
-
-                    case uint sv when maxStatsVal is uint msv:
-                        if (sv > msv) throw new StatOutOfRangeException<uint>(prop.Name, sv, msv);
-                        break;
-
-                    default:
-                        throw new Exception($"Invalid stat type ({statsVal.GetType()}) for stat {prop.Name}.");
-                }
-            }
+            Stats.EnsureNotGreaterThan(MaxStats);
         }
     }
 }

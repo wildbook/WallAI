@@ -36,17 +36,22 @@ namespace WallAI.Simulation.CUI
             var stats = new Stats
             {
                 Alive = true,
-                Energy = 25,
-                VisionRadius = 5,
+                Energy = 30,
+                VisionRadius = 10,
+                Height = 10,
+                Opaque = true,
             };
 
             var maxStats = new Stats(stats)
             {
                 Energy = 30,
+                VisionRadius = 10,
             };
 
             _simulation.World[new Point2D(12, 12)].Entity = new Entity<Testing>(stats, maxStats);
-            _simulation.World[new Point2D(14, 14)].Entity = new Entity<Testing>(new Stats(stats){Energy = 5}, maxStats);
+            _simulation.World[new Point2D(14, 14)].Entity = new Entity<Testing>(new Stats(stats) { Energy = 5, VisionRadius = 3 }, maxStats);
+            _simulation.World[new Point2D(16, 16)].Entity = new Entity<Testing>(new Stats(stats) { Energy = 5, VisionRadius = 3 }, maxStats);
+            _simulation.World[new Point2D(17, 18)].Entity = new Entity<Testing>(new Stats(stats) { Energy = 5, VisionRadius = 3 }, maxStats);
 
             while (true)
             {

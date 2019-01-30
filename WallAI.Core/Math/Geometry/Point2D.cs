@@ -15,6 +15,9 @@ namespace WallAI.Core.Math.Geometry
 
         public static Point2D operator +(Point2D point1, Point2D point2) => new Point2D(point1.X + point2.X, point1.Y + point2.Y);
         public static Point2D operator -(Point2D point1, Point2D point2) => new Point2D(point1.X - point2.X, point1.Y - point2.Y);
+        public static bool operator ==(Point2D point1, Point2D point2) => point1.Equals(point2);
+        public static bool operator !=(Point2D point1, Point2D point2) => !point1.Equals(point2);
+
         public static Point2D Zero { get; } = new Point2D(0, 0);
 
         public bool Equals(Point2D other) => (X, Y) == (other.X, other.Y);

@@ -51,7 +51,7 @@ namespace WallAI.Core.World.Ai
         }
 
         public IWorld2D CreateDerivedWorld2D(Point2D center, Func<Point2D, bool> isVisible) => new PartialWorld2D(this, center, isVisible, _lifetime.CreateChild());
-        public IEnumerable<IWorld2DTile2D> TilesInRange(Circle2D circle) => _world2D.TilesInRange(circle).Where(x => _isVisible(x.Location) || true);
+        public IEnumerable<IWorld2DTile2D> TilesInRange(Circle2D circle) => _world2D.TilesInRange(circle).Where(x => _isVisible(x.Location));
 
         public IEnumerable<IWorld2DEntity> Entities
         {

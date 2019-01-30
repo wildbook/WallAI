@@ -74,8 +74,25 @@ namespace WallAI.Core.Ai
                 ShadowCaster.ComputeFieldOfViewWithShadowCasting(
                     Entity.Location.X,
                     Entity.Location.Y,
-                    visionRadius,
-                    (x, y) => map[new Point2D(x, y)].Entity != null,
+                    visionRadius - 1,
+                    (x, y) =>
+                    {
+                        var point = new Point2D(x, y);
+                        if (point.Equals(Entity.Location))
+                            return false;
+
+                        var tile = map[point];
+
+                        if (tile.Entity == null)
+                            return false;
+
+                        var stats = Entity.Stats;
+                        var tileStats = tile.Entity.Stats;
+                        if (tileStats.Height < stats.Height)
+                            return false;
+
+                        return tileStats.Opaque;
+                    },
                     (x, y) => visiblePoints.Add(new Point2D(x, y)));
 
                 return map.CreateDerivedWorld2D(Entity.Location, x => visiblePoints.Contains(x));

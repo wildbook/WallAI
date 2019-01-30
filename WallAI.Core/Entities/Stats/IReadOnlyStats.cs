@@ -4,6 +4,8 @@
     {
         bool Alive { get; }
         uint Energy { get; }
-        int VisionRadius { get; }
+        uint Height { get; }
+        bool Opaque { get; }
+        byte VisionRadius { get; }
     }
 }
