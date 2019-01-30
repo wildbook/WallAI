@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using WallAI.Core.Entities;
 using WallAI.Core.Entities.Stats;
 using WallAI.Core.Helpers.Extensions;
@@ -17,8 +18,9 @@ namespace WallAI.Simulation
         {
             private static readonly (int Weight, Func<IStats, IStats, IEntity> Factory)[] AiFactories =
             {
-                (25, (start, max) => null),
-                (1,  (start, max) => new Entity<Testing>(start, max)),
+                (100, (s, m) => null),
+                (1,  (s, m) => new Entity<ObedientAi>(s, m)),
+                (5,  (s, m) => new Entity<Testing>(s, m)),
             };
 
             public ITile2D GenerateTile(int seed, Point2D location)
