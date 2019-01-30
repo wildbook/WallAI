@@ -29,9 +29,11 @@ namespace WallAI.Core.Math.Geometry
 
         [Pure]
         public bool ContainsPoint(Point2D point)
-            => point.X >= X &&
-               point.Y >= Y &&
+            => !(point.X < X) &&
+               !(point.Y < Y) &&
                point.X < X + Width && 
                point.Y < Y + Height;
+
+        public override string ToString() => $"({_origin}, {new Point2D(X2, Y2)})";
     }
 }

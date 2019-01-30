@@ -25,5 +25,7 @@ namespace WallAI.Core.Math.Geometry
             Point2D lp = point - Origin;
             return (lp.X * lp.X) + (lp.Y * lp.Y) < (Radius * Radius);
         }
+
+        public override string ToString() => $"({Origin}, Ø{Radius * 2})";
     }
 }
