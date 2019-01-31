@@ -8,7 +8,6 @@ namespace WallAI.Core.Entities.Stats
     {
         public bool Alive { get; set; }
         public uint Energy { get; set; }
-        public uint Height { get; set; }
         public bool Opaque { get; set; }
         public byte VisionRadius { get; set; }
 
@@ -22,7 +21,7 @@ namespace WallAI.Core.Entities.Stats
             }
         }
 
-        public void EnsureNotGreaterThan(Stats maxStats)
+        public void EnsureNotGreaterThan(IStats maxStats)
         {
             foreach (var property in typeof(IStats).GetProperties(BindingFlags.FlattenHierarchy | BindingFlags.Public | BindingFlags.Instance))
             {

@@ -1,19 +1,19 @@
 using System;
-using System.Collections.Generic;
 using WallAI.Core.Ai.Vision;
 using WallAI.Core.Entities.Stats;
 using WallAI.Core.Enums;
 using WallAI.Core.Math.Geometry;
 using WallAI.Core.Tiles;
-using WallAI.Core.World;
-using WallAI.Core.World.Ai;
-using WallAI.Core.World.Entities;
+using WallAI.Core.Worlds;
+using WallAI.Core.Worlds.Ai;
+using WallAI.Core.Worlds.Entities;
 
 namespace WallAI.Core.Ai
 {
-    public class AiCore : IAiCore
+    public class AiCore : IAiCore, IDisposable
     {
         private readonly AiWorld2D _aiWorld2D;
+        private readonly IPartialWorld2D _world2D;
         private IWorld2DEntity Entity { get; }
         public IReadOnlyStats Stats => Entity.Stats;
         public IReadOnlyStats MaxStats => Entity.MaxStats;
@@ -24,11 +24,17 @@ namespace WallAI.Core.Ai
         public AiCore(AiWorld2D aiWorld2D, IWorld2DEntity entity, int tick)
         {
             _aiWorld2D = aiWorld2D;
-            Entity = entity;
+            Entity = entity.WithLocationOffset(Point2D.Zero - entity.Location);
             Tick = tick;
-        }
 
-        public IWorld2D LockRect(Point2D center, Rectangle2D rect) => _aiWorld2D.LockRect(center, rect);
+            var visionRange = entity.Stats.VisionRadius;
+            var visionOffset = new Point2D(visionRange, visionRange);
+            var visionRect = new Rectangle2D(
+                Location - visionOffset,
+                Location + visionOffset);
+
+            _world2D = aiWorld2D.RequestRect(entity.Id, entity.Location, visionRect);
+        }
 
         public Random GetRandom() => new Random(_aiWorld2D.Seed + Tick);
 
@@ -45,24 +51,19 @@ namespace WallAI.Core.Ai
             else if (direction == Direction.South)
                 destinationPoint += new Point2D(0, 1);
 
-            var lockRect = new Rectangle2D(Location, destinationPoint);
+            if (_world2D[destinationPoint].Entity != null)
+                return new ActionStatus(ActionStatus.Status.InvalidAction, "Target cell contains an entity.");
 
-            using (var map = LockRect(Point2D.Zero, lockRect))
+            var energyStatus = DeltaEnergy(-1);
+
+            if (energyStatus.Success)
             {
-                if (map[destinationPoint].Entity != null)
-                    return new ActionStatus(ActionStatus.Status.InvalidAction, "Target cell contains an entity.");
-                
-                var energyStatus = DeltaEnergy(-1);
-
-                if (energyStatus.Success)
-                {
-                    var obj = map[Location];
-                    map[Location] = new Tile2D();
-                    map[destinationPoint] = obj;
-                }
-
-                return energyStatus;
+                var obj = _world2D[Location];
+                _world2D[Location] = new Tile2D();
+                _world2D[destinationPoint] = obj;
             }
+
+            return energyStatus;
         }
 
         public void Kill() => Entity.Stats.Alive = false;
@@ -70,36 +71,32 @@ namespace WallAI.Core.Ai
         public IReadOnlyWorld2D GetVisibleWorld()
         {
             var visionRadius = Stats.VisionRadius;
+            
+            var fov = new RPAS(RPAS.Configuration.Default);
+            var visiblePoints = fov.CalculateVisibleCells(new Circle2D(Entity.Location, visionRadius - 1), x => !IsOpaque(x.X, x.Y));
 
-            var lockRect = new Rectangle2D(Location - new Point2D(visionRadius, visionRadius), visionRadius * 2, visionRadius * 2);
-            using (var map = LockRect(Point2D.Zero, lockRect))
+            var visionOffset = new Point2D(visionRadius, visionRadius);
+            var visionMaxRect = new Rectangle2D(Location - visionOffset, Location + visionOffset);
+
+            return _world2D.CreateDerivedWorld2D(Entity.Location, visionMaxRect, x => visiblePoints.Contains(x));
+
+            bool IsOpaque(int x, int y)
             {
-                var fov = new RPAS(RPAS.Configuration.Default);
-                var visiblePoints = fov.CalculateVisibleCells(new Circle2D(Entity.Location, visionRadius - 1), x => !IsOpaque(x.X, x.Y));
+                var point = new Point2D(x, y);
+                if (point.Equals(Entity.Location))
+                    return false;
 
-                return map.CreateDerivedWorld2D(Entity.Location, x => visiblePoints.Contains(x));
+                var tile = _world2D[point];
+                if (tile.Entity == null)
+                    return false;
 
-                bool IsOpaque(int x, int y)
-                {
-                    var point = new Point2D(x, y);
-                    if (point.Equals(Entity.Location))
-                        return false;
+                if (!tile.Entity.Stats.Opaque)
+                    return false;
 
-                    var tile = map[point];
-
-                    if (tile.Entity == null)
-                        return false;
-
-                    var stats = Entity.Stats;
-                    var tileStats = tile.Entity.Stats;
-                    if (tileStats.Height < stats.Height)
-                        return false;
-
-                    return tileStats.Opaque;
-                }
+                return true;
             }
         }
-        
+
         private ActionStatus DeltaEnergy(int energy)
         {
             if (Stats.Alive == false)
@@ -115,6 +112,8 @@ namespace WallAI.Core.Ai
 
             return new ActionStatus(ActionStatus.Status.Success);
         }
+
+        public void Dispose() => _world2D.Dispose();
     }
 
     public readonly struct ActionStatus

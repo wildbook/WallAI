@@ -3,18 +3,14 @@ using WallAI.Core.Entities;
 
 namespace WallAI.Core.Tiles
 {
-    public class Tile2D : ITile2D, IReadOnlyTile2D, IEquatable<Tile2D>
+    public class Tile2D : ITile2D, IEquatable<Tile2D>
     {
+        public Guid Id => Entity.Id;
         public IEntity Entity { get; set; }
 
         public Tile2D(IEntity entity = null) => Entity = entity;
 
-        public bool Equals(Tile2D other)
-        {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
-            return Equals(Entity, other.Entity);
-        }
+        public bool Equals(Tile2D other) => Id == other.Id;
 
         public override bool Equals(object obj)
         {

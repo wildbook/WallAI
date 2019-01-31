@@ -2,17 +2,14 @@
 using WallAI.Core.Entities.Stats;
 using WallAI.Core.Enums;
 using WallAI.Core.Math.Geometry;
-using WallAI.Core.World;
+using WallAI.Core.Worlds;
 
 namespace WallAI.Core.Ai
 {
     public interface IAiCore
     {
-        IReadOnlyStats Stats { get; }
         IReadOnlyStats MaxStats { get; }
-
-        // TODO: Remove IAiCore.Vision
-        // Currently allows the player to cheat by saving Vision.Origin and pooling AI instances.
+        IReadOnlyStats Stats { get; }
         Circle2D Vision { get; }
 
         Random GetRandom();

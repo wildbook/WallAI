@@ -1,7 +1,7 @@
 ﻿using WallAI.Core.Math.Geometry;
 using WallAI.Core.Tiles;
 
-namespace WallAI.Core.World
+namespace WallAI.Core.Worlds
 {
     public interface IWorld2DMethods
     {

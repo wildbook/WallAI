@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace WallAI.Core.Helpers.Disposable
+namespace WallAI.Core.Helpers.Disposables
 {
     public class NotifyOnDispose : ITrackingDisposable
     {

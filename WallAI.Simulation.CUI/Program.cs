@@ -2,11 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using ConcurrentCollections;
 using WallAI.Core.Ai;
+using WallAI.Core.Entities;
+using WallAI.Core.Entities.Stats;
 using WallAI.Core.Math.Geometry;
 using WallAI.Core.Tiles;
-using WallAI.Core.World.Ai;
-using WallAI.Core.World.Entities;
+using WallAI.Core.Worlds.Ai;
+using WallAI.Core.Worlds.Entities;
+using WallAI.Simulation.Ai;
 
 namespace WallAI.Simulation.CUI
 {
@@ -30,59 +34,89 @@ namespace WallAI.Simulation.CUI
             Console.SetWindowSize(windowRect.Width, windowRect.Height);
             Console.SetBufferSize(windowRect.Width, windowRect.Height);
 
+            //NOTE: The GUIDs below are random, meaning the world is not deterministic.
+            // Do not spawn in entities manually like below without controlling the seed.
+
+            _simulation.World[new Point2D(10, 10)].Entity
+                = new Entity<ObedientAi>(Guid.NewGuid(),
+                    new Stats
+                    {
+                        Alive = true,
+                        Energy = 25,
+                        Opaque = true,
+                        VisionRadius = 8
+                    });
+
+            _simulation.World[new Point2D(11, 10)].Entity
+                = new Entity<Testing>(Guid.NewGuid(),
+                    new Stats
+                    {
+                        Alive = false,
+                        Opaque = true,
+                    });
+
             while (true)
             {
                 _simulation.Tick();
 
-                DrawRect(new Rectangle2D(offset, (_simulation.Size.X) * 2 + 1, _simulation.Size.Y + 1), ConsoleColor.DarkGray);
                 var visionMap = CalculateVisionMap(_simulation.World.Entities);
+
+                DrawRect(new Rectangle2D(offset, _simulation.Size.X * 2 + 1, _simulation.Size.Y + 1), ConsoleColor.DarkGray);
                 Render(worldOffset, visionMap, _simulation);
+
                 Thread.Sleep(100);
             }
         }
 
-        private static HashSet<Point2D> CalculateVisionMap(IEnumerable<IWorld2DEntity> worldEntities)
+        private static ConcurrentHashSet<Point2D> CalculateVisionMap(IEnumerable<IWorld2DEntity> worldEntities)
         {
-            var visionMap = new HashSet<Point2D>();
+            var visionMap = new ConcurrentHashSet<Point2D>();
+            var world = new AiWorld2D(_simulation.World);
 
-            foreach (var entity in worldEntities.Where(x => x.Stats.Alive).ToArray())
+            var entities = worldEntities.Where(x => x.Stats.Alive).ToArray();
+            
+            foreach (var entity in entities)
+              TickEntity(entity);
+
+            return visionMap;
+
+            void TickEntity(IWorld2DEntity entity)
             {
-                var core = new AiCore(new AiWorld2D(entity.World), entity, _simulation.CurrentTick);
+                var core = new AiCore(world, entity, _simulation.CurrentTick);
+
                 using (var map = core.GetVisibleWorld())
                 {
                     var tiles = map.TilesInRange(new Circle2D(entity.Location, core.Stats.VisionRadius));
 
                     foreach (var tile in tiles)
-                        visionMap.Add(tile.Location);
+                        visionMap.Add(tile.Location + entity.Location);
                 }
             }
-
-            return visionMap;
         }
 
         public static void DrawRect(Rectangle2D rect, ConsoleColor color)
         {
-            Console.SetCursorPosition(rect.X, rect.Y);
+            Console.SetCursorPosition(rect.X1, rect.Y1);
 
             var center = new string('═', rect.Width - 1);
 
             Console.Write($"╔{center}╗");
 
-            for (var y = rect.Y + 1; y < rect.Y2; y++)
+            for (var y = rect.Y1 + 1; y < rect.Y2; y++)
             {
-                Console.SetCursorPosition(rect.X, y);
+                Console.SetCursorPosition(rect.X1, y);
                 Console.Write('║');
 
                 Console.SetCursorPosition(rect.X2, y);
                 Console.Write('║');
             }
 
-            Console.SetCursorPosition(rect.X, rect.Y2);
+            Console.SetCursorPosition(rect.X1, rect.Y2);
             Console.Write($"╚{center}╝");
             Console.ResetColor();
         }
 
-        private static void Render(Point2D offset, HashSet<Point2D> visionMap, Simulation simulation)
+        private static void Render(Point2D offset, ICollection<Point2D> visionMap, Simulation simulation)
         {
             var world = simulation.World;
             var size = simulation.Size;

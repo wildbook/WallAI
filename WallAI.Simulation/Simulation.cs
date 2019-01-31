@@ -1,8 +1,9 @@
 ﻿using System.Linq;
 using WallAI.Core.Ai;
 using WallAI.Core.Math.Geometry;
-using WallAI.Core.World;
-using WallAI.Core.World.Ai;
+using WallAI.Core.Worlds;
+using WallAI.Core.Worlds.Ai;
+using WallAI.Core.Worlds.Entities;
 
 namespace WallAI.Simulation
 {
@@ -27,11 +28,18 @@ namespace WallAI.Simulation
         public void Tick()
         {
             var aiWorld = new AiWorld2D(World);
-
-            foreach (var entity in World.Entities.Where(x => x.Stats.Alive).ToArray())
-                entity.Ai.Tick(new AiCore(aiWorld, entity, CurrentTick));
+            var entities = World.Entities.Where(x => x.Stats.Alive).ToArray();
+            
+            foreach (var entity in entities)
+                TickEntity(entity);
 
             CurrentTick++;
+
+            void TickEntity(IWorld2DEntity entity)
+            {
+                using (var core = new AiCore(aiWorld, entity, CurrentTick))
+                    entity.Ai.Tick(core);
+            }
         }
     }
 }

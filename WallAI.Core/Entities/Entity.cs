@@ -1,17 +1,16 @@
 ﻿using System;
-using System.Net.NetworkInformation;
-using System.Reflection;
 using WallAI.Core.Ai;
 using WallAI.Core.Entities.Stats;
 
 namespace WallAI.Core.Entities
 {
-    public class Entity<T> : IEntity where T : IAi, new()
+    public class Entity<T> : IEntity, IEquatable<Entity<T>> where T : IAi, new()
     {
         public IAi Ai { get; }
 
-        public Stats.Stats Stats { get; set; }
-        public Stats.Stats MaxStats { get; set; }
+        public IStats Stats { get; set; }
+        public IStats MaxStats { get; set; }
+        public Guid Id { get; }
 
         IReadOnlyStats IReadOnlyEntity.MaxStats => MaxStats;
         IStats IEntity.MaxStats
@@ -27,15 +26,19 @@ namespace WallAI.Core.Entities
             set => Stats = value as Stats.Stats ?? new Stats.Stats(value);
         }
 
-        public Entity(T ai, IStats stats, IStats maxStats)
+        public Entity(Guid id, T ai, IStats stats, IStats maxStats)
         {
             Ai = ai;
-            Stats = new Stats.Stats(stats);
-            MaxStats = new Stats.Stats(maxStats);
+            Stats = stats;
+            MaxStats = maxStats;
+            Id = id;
 
-            Stats.EnsureNotGreaterThan(MaxStats);
+            new Stats.Stats(Stats).EnsureNotGreaterThan(MaxStats);
         }
 
-        public Entity(IStats stats, IStats maxStats) : this(new T(), stats, maxStats) { }
+        public Entity(Guid id, IStats stats, IStats maxStats) : this(id, new T(), stats, maxStats) { }
+        public Entity(Guid id, IStats stats) : this(id, new T(), stats, stats) { }
+
+        public bool Equals(Entity<T> other) => other.Id == Id;
     }
 }

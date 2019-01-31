@@ -22,7 +22,7 @@ namespace WallAI.Core.Math.Geometry
         [Pure]
         public bool ContainsPoint(Point2D point)
         {
-            Point2D lp = point - Origin;
+            var lp = point - Origin;
             return (lp.X * lp.X) + (lp.Y * lp.Y) < (Radius * Radius);
         }
 

@@ -1,6 +1,6 @@
 ﻿using WallAI.Core.Math.Geometry;
 using WallAI.Core.Tiles;
-using WallAI.Core.World;
+using WallAI.Core.Worlds;
 
 namespace WallAI.Simulation
 {
@@ -26,9 +26,6 @@ namespace WallAI.Simulation
         }
 
         public static IWorld2D Create(IWorld2DMethods methods, Point2D size, int seed) => new WrappingWorld2D(methods, size, seed);
-        protected WrappingWorld2D(IWorld2DMethods methods, Point2D size, int seed) : base(methods, seed)
-        {
-            _size = size;
-        }
+        protected WrappingWorld2D(IWorld2DMethods methods, Point2D size, int seed) : base(methods, seed) => _size = size;
     }
 }

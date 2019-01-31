@@ -21,6 +21,14 @@ namespace WallAI.Core.Helpers.Extensions
             return items[rand.Next(items.Length)];
         }
 
+        public static Guid NextGuid(this Random rand)
+        {
+            var guid = new byte[16];
+            rand.NextBytes(guid);
+
+            return new Guid(guid);
+        }
+
         public static T NextByWeight<T>(this Random random, IEnumerable<T> sequence, Func<T, float> weightSelector)
         {
             Contract.Assert(sequence != null);

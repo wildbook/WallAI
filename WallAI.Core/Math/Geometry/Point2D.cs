@@ -1,25 +1,47 @@
 ﻿using System;
+using System.Diagnostics.Contracts;
 
 namespace WallAI.Core.Math.Geometry
 {
-    public readonly struct Point2D
+    public readonly struct Point2D : IEquatable<Point2D>
     {
         public readonly int X;
         public readonly int Y;
 
         public Point2D(int x, int y) { X = x; Y = y; }
 
-        public static Point2D operator +(Point2D point1, Point2D point2) => new Point2D(point1.X + point2.X, point1.Y + point2.Y);
-        public static Point2D operator -(Point2D point1, Point2D point2) => new Point2D(point1.X - point2.X, point1.Y - point2.Y);
-        public static bool operator ==(Point2D point1, Point2D point2) => point1.Equals(point2);
-        public static bool operator !=(Point2D point1, Point2D point2) => !point1.Equals(point2);
+        [Pure] public static Point2D operator  +(Point2D point1, Point2D point2) => new Point2D(point1.X + point2.X, point1.Y + point2.Y);
+        [Pure] public static Point2D operator  -(Point2D point1, Point2D point2) => new Point2D(point1.X - point2.X, point1.Y - point2.Y);
+        [Pure] public static bool    operator ==(Point2D point1, Point2D point2) =>  point1.Equals(point2);
+        [Pure] public static bool    operator !=(Point2D point1, Point2D point2) => !point1.Equals(point2);
+        [Pure] public static Point2D operator  /(Point2D point, int divisor)     => new Point2D(point.X / divisor, point.Y / divisor);
+        [Pure] public static Point2D operator *(Point2D point, int multiplier) => new Point2D(point.X * multiplier, point.Y * multiplier);
+        [Pure] public static Point2D operator -(Point2D point) => new Point2D(-point.X, -point.Y);
 
-        public static Point2D Zero { get; } = new Point2D(0, 0);
+        /// <summary>
+        /// <remarks>Rounds to nearest whole <see cref="int"/>.</remarks>
+        /// </summary>
+        /// <param name="point">The point to return a modified copy of.</param>
+        /// <param name="divisor">Divisor.</param>
+        /// <returns></returns>
+        [Pure] public static Point2D operator /(Point2D point, float divisor) => new Point2D((int)((point.X / divisor) + 0.5f), (int)((point.Y / divisor) + 0.5f));
 
-        public bool Equals(Point2D other) => (X, Y) == (other.X, other.Y);
-        public override bool Equals(object obj) => obj is Point2D other && Equals(other);
-        public override int GetHashCode() => HashCode.Combine(X, Y);
+        /// <summary>
+        /// <remarks>Rounds to nearest whole <see cref="int"/>.</remarks>
+        /// </summary>
+        /// <param name="point">The point to return a modified copy of.</param>
+        /// <param name="multiplier">Multiplier.</param>
+        /// <returns></returns>
+        [Pure] public static Point2D operator *(Point2D point, float multiplier) => new Point2D((int)((point.X * multiplier) + 0.5f), (int)((point.Y * multiplier) + 0.5f));
 
-        public override string ToString() => $"({X}, {Y})";
+        /// <summary>
+        /// A static <see cref="Point2D"/> with <see cref="P:X"/> and <see cref="P:Y"/> set to 0.
+        /// </summary>
+        [Pure] public static Point2D Zero { get; } = new Point2D(0, 0);
+
+        [Pure] public bool Equals(Point2D other) => (X, Y) == (other.X, other.Y);
+        [Pure] public override bool Equals(object obj) => obj is Point2D other && Equals(other);
+        [Pure] public override int GetHashCode() { unchecked { return (X * 397) ^ Y; } }
+        [Pure] public override string ToString() => $"({X}, {Y})";
     }
 }
