@@ -23,9 +23,9 @@ namespace WallAI.Core.Math.Geometry
         public bool ContainsPoint(Point2D point)
         {
             var lp = point - Origin;
-            return (lp.X * lp.X) + (lp.Y * lp.Y) < (Radius * Radius);
+            return (lp.X * lp.X) + (lp.Y * lp.Y) < (RadiusSquared);
         }
 
-        public override string ToString() => $"({Origin}, Ø{Radius * 2})";
+        public override string ToString() => $"({Origin}, Ø{RadiusSquared})";
     }
 }
