@@ -37,10 +37,7 @@ namespace WallAI.Simulation.CUI
 
             Console.SetWindowSize(windowRect.Width, windowRect.Height);
             Console.SetBufferSize(windowRect.Width, windowRect.Height);
-
-            //NOTE: The GUIDs below are random, meaning the world is not deterministic.
-            // Do not spawn in entities manually like below without controlling the seed.
-
+            
             _simulation.World[new Point2D(10, 10)].Entity
                 = new Entity<ObedientAi>(random.NextGuid(),
                     new Stats
