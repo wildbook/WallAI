@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Linq;
 
 namespace WallAI.Core.Helpers.Extensions
@@ -31,8 +30,8 @@ namespace WallAI.Core.Helpers.Extensions
 
         public static T NextByWeight<T>(this Random random, IEnumerable<T> sequence, Func<T, float> weightSelector)
         {
-            Contract.Assert(sequence != null);
-            Contract.Assert(weightSelector != null);
+            if (sequence == null) throw new ArgumentNullException(nameof(sequence));
+            if (weightSelector == null) throw new ArgumentNullException(nameof(weightSelector));
 
             var enumerable = sequence as T[] ?? sequence.ToArray();
             var totalWeight = enumerable.Sum(weightSelector);

@@ -1,6 +1,7 @@
 ﻿using System;
 using WallAI.Core.Entities;
 using WallAI.Core.Entities.Stats;
+using WallAI.Core.Helpers;
 using WallAI.Core.Helpers.Extensions;
 using WallAI.Core.Math.Geometry;
 using WallAI.Core.Tiles;
@@ -24,7 +25,7 @@ namespace WallAI.Simulation
 
             public ITile2D GenerateTile(int seed, Point2D location)
             {
-                var random = new Random(HashCode.Combine(seed, location));
+                var random = new LoggingRandom(HashCode.Combine(seed, location));
                 
                 var stats = new Stats
                 {

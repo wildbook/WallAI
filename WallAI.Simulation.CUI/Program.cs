@@ -6,6 +6,8 @@ using ConcurrentCollections;
 using WallAI.Core.Ai;
 using WallAI.Core.Entities;
 using WallAI.Core.Entities.Stats;
+using WallAI.Core.Helpers;
+using WallAI.Core.Helpers.Extensions;
 using WallAI.Core.Math.Geometry;
 using WallAI.Core.Tiles;
 using WallAI.Core.Worlds.Ai;
@@ -25,7 +27,9 @@ namespace WallAI.Simulation.CUI
 
             Console.CursorVisible = false;
 
-            _simulation = new DemoSimulation(new Point2D(40, 40), 1);
+            var random = new LoggingRandom(0);
+
+            _simulation = new DemoSimulation(new Point2D(40, 40), random.Next());
 
             var offset = new Point2D(offsetInt * 2, offsetInt);
             var worldOffset = offset + new Point2D(1, 1);
@@ -38,7 +42,7 @@ namespace WallAI.Simulation.CUI
             // Do not spawn in entities manually like below without controlling the seed.
 
             _simulation.World[new Point2D(10, 10)].Entity
-                = new Entity<ObedientAi>(Guid.NewGuid(),
+                = new Entity<ObedientAi>(random.NextGuid(),
                     new Stats
                     {
                         Alive = true,
@@ -48,7 +52,7 @@ namespace WallAI.Simulation.CUI
                     });
 
             _simulation.World[new Point2D(11, 10)].Entity
-                = new Entity<Testing>(Guid.NewGuid(),
+                = new Entity<Testing>(random.NextGuid(),
                     new Stats
                     {
                         Alive = false,

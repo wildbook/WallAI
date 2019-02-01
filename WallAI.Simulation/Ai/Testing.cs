@@ -1,5 +1,4 @@
-﻿using System;
-using WallAI.Core.Ai;
+﻿using WallAI.Core.Ai;
 using WallAI.Core.Enums;
 using WallAI.Core.Helpers.Extensions;
 
@@ -11,7 +10,7 @@ namespace WallAI.Simulation.Ai
 
         public void Tick(IAiCore ai)
         {
-            var rand = new Random();
+            var rand = ai.GetRandom();
 
             if (ai.Stats.Energy == 0)
             {

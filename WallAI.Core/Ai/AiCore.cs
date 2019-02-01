@@ -2,6 +2,7 @@ using System;
 using WallAI.Core.Ai.Vision;
 using WallAI.Core.Entities.Stats;
 using WallAI.Core.Enums;
+using WallAI.Core.Helpers;
 using WallAI.Core.Math.Geometry;
 using WallAI.Core.Tiles;
 using WallAI.Core.Worlds;
@@ -36,7 +37,7 @@ namespace WallAI.Core.Ai
             _world2D = aiWorld2D.RequestRect(entity.Id, entity.Location, visionRect);
         }
 
-        public Random GetRandom() => new Random(_aiWorld2D.Seed + Tick);
+        public Random GetRandom() => new LoggingRandom(_aiWorld2D.Seed ^ Location.X ^ Location.Y ^ Tick);
 
         public ActionStatus Move(Direction direction)
         {
