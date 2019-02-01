@@ -16,7 +16,7 @@ namespace WallAI.Core.Worlds.Entities
         public Guid Id => _entity.Id;
         public IAi Ai => _entity.Ai;
         public IWorld2DEntity WithLocationOffset(Point2D offset) => new World2DEntity(_world, _entity, Location + offset);
-        public IStats MaxStats { get => _entity.Stats; set => _entity.Stats = new Stats(value); }
+        public IStats MaxStats { get => _entity.MaxStats; set => _entity.MaxStats = new Stats(value); }
         public IStats Stats { get => _entity.Stats; set => _entity.Stats = new Stats(value); }
 
         internal World2DEntity(IWorld2D world, IEntity entity, Point2D location)
