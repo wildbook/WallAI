@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading;
 using ConcurrentCollections;
 using WallAI.Core.Ai;
@@ -35,9 +36,8 @@ namespace WallAI.Simulation.CUI
             var worldOffset = offset + new Point2D(1, 1);
             var windowRect = new Rectangle2D(offset, offset + offset + new Point2D(_simulation.Size.X * 2, _simulation.Size.Y) + offset + new Point2D(1, 1));
 
-            Console.SetWindowSize(windowRect.Width, windowRect.Height);
-            Console.SetBufferSize(windowRect.Width, windowRect.Height);
-            
+            ResizeConsole(windowRect);
+
             _simulation.World[new Point2D(10, 10)].Entity
                 = new Entity<ObedientAi>(random.NextGuid(),
                     new Stats
@@ -69,15 +69,39 @@ namespace WallAI.Simulation.CUI
             }
         }
 
+        [DllImport("libc")]
+        private static extern int system(string exec);
+
+        private static void ResizeConsole(Rectangle2D windowRect)
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                Console.SetWindowSize(windowRect.Width, windowRect.Height);
+                Console.SetBufferSize(windowRect.Width, windowRect.Height);
+            }
+
+            // Should work, by https://github.com/OrangeNote.
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                system($"printf '\\e[8;{windowRect.Height};{windowRect.Width}t'");
+            }
+
+            // Needs testing, for now I'll assume it works.
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                system($"printf '\\e[8;{windowRect.Height};{windowRect.Width}t'");
+            }
+        }
+
         private static ConcurrentHashSet<Point2D> CalculateVisionMap(IEnumerable<IWorld2DEntity> worldEntities)
         {
             var visionMap = new ConcurrentHashSet<Point2D>();
             var world = new AiWorld2D(_simulation.World);
 
             var entities = worldEntities.Where(x => x.Stats.Alive).ToArray();
-            
+
             foreach (var entity in entities)
-              TickEntity(entity);
+                TickEntity(entity);
 
             return visionMap;
 
