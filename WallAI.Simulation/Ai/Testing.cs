@@ -7,6 +7,8 @@ namespace WallAI.Simulation.Ai
 {
     public class Testing : IAi
     {
+        public string Name => nameof(Testing);
+
         public void Tick(IAiCore ai)
         {
             var rand = new Random();

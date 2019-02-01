@@ -16,6 +16,9 @@ namespace WallAI.Core.Worlds.Tiles
 
         public IWorld2DTile2D WithLocationOffset(Point2D offset) => new World2DTile2D(this, Location + offset, World);
 
+        IEntity ITile2D.Entity { get => Entity; set => Entity = value; }
+        IReadOnlyEntity IReadOnlyTile2D.Entity => Entity;
+
         Guid IReadOnlyTile2D.Id => Id;
         IReadOnlyWorld2D IReadOnlyWorld2DTile2D.World => World;
         IWorld2DTile2D IWorld2DTile2D.WithLocationOffset(Point2D offset) => WithLocationOffset(offset);

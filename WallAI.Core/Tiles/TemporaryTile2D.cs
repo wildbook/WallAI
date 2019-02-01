@@ -19,6 +19,8 @@ namespace WallAI.Core.Tiles
             }
         }
 
+        IEntity ITile2D.Entity { get => Entity; set => Entity = value; }
+        IReadOnlyEntity IReadOnlyTile2D.Entity => Entity;
 
         public TemporaryTile2D(ITile2D tile2D, Action<ITile2D> onSet)
         {

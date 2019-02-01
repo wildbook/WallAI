@@ -6,6 +6,6 @@ namespace WallAI.Core.Tiles
     public interface IReadOnlyTile2D
     {
         Guid Id { get; }
-        IEntity Entity { get; }
+        IReadOnlyEntity Entity { get; }
     }
 }

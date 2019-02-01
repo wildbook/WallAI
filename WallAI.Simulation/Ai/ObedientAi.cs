@@ -6,6 +6,8 @@ namespace WallAI.Simulation.Ai
 {
     public class ObedientAi : IAi
     {
+        public string Name => nameof(ObedientAi);
+
         public void Tick(IAiCore ai)
         {
             if (ai.Stats.Energy == 0)

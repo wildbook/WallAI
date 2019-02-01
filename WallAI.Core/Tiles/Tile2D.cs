@@ -7,6 +7,9 @@ namespace WallAI.Core.Tiles
     {
         public Guid Id => Entity.Id;
         public IEntity Entity { get; set; }
+        
+        IEntity ITile2D.Entity { get => Entity; set => Entity = value; }
+        IReadOnlyEntity IReadOnlyTile2D.Entity => Entity;
 
         public Tile2D(IEntity entity = null) => Entity = entity;
 
