@@ -5,7 +5,8 @@ using WallAI.Core.Math.Geometry;
 
 namespace WallAI.Core.Ai.Vision
 {
-    // Based on http://roguebasin.roguelikedevelopment.org/index.php?title=Restrictive_Precise_Angle_Shadowcasting
+    // Based on a python implementation of http://roguebasin.roguelikedevelopment.org/index.php?title=Restrictive_Precise_Angle_Shadowcasting
+    // ReSharper disable once InconsistentNaming IdentifierTypo
     public class RPAS
     {
         // Holds the three angles for each cell. Near is closest to the horizontal/vertical line, and far is furthest.
@@ -87,13 +88,14 @@ namespace WallAI.Core.Ai.Vision
 
         public Configuration CurrentConfiguration { get; }
 
+        // ReSharper disable once IdentifierTypo
         public RPAS(Configuration configuration)
             => CurrentConfiguration = configuration;
 
         // Parameter func_transparent is a function with the sig: boolean func(x, y)
         // It should return True if the cell is transparent, and False otherwise.
         //
-        // Returns a set with all (x, y) tuples visible from the centerpoint.
+        // Returns a set with all (x, y) tuples visible from the center point.
         public HashSet<Point2D> CalculateVisibleCells(Circle2D circle, Func<Point2D, bool> isTransparent)
         {
             var cells = VisibleCellsInQuadrantFrom(circle.X, circle.Y, 1, 1, circle.Radius, isTransparent);
@@ -113,7 +115,7 @@ namespace WallAI.Core.Ai.Vision
             return cells;
         }
 
-        // Returns a set of (x, y) typles.
+        // Returns a set of (x, y) tuples.
         // Utilizes the NOT_VISIBLE_BLOCKS_VISION variable.
         private HashSet<Point2D> VisibleCellsInOctantFrom(int xCenter, int yCenter, int quadX, int quadY, int radius, Func<Point2D, bool> funcTransparent, bool isVertical)
         {
@@ -124,7 +126,10 @@ namespace WallAI.Core.Ai.Vision
             // End conditions:
             //   iteration > radius
             //   Full obstruction coverage (indicated by one object in the obstruction list covering the full angle from 0 to 1)
-            while (iteration <= radius && !(obstructions.Count == 1 && obstructions[0].Near == 0.0 && obstructions[0].Far == 1.0))
+            while (iteration <= radius && 
+                   !(obstructions.Count == 1 &&
+                     System.Math.Abs(obstructions[0].Near) < float.Epsilon &&
+                     System.Math.Abs(obstructions[0].Far - 1.0f) < float.Epsilon))
             {
                 var numCellsInRow = iteration + 1;
                 var angleAllocation = 1.0f / numCellsInRow;
