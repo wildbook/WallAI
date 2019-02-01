@@ -1,29 +1,25 @@
 ﻿using System;
+using System.Runtime.Serialization;
 using WallAI.Core.Entities;
 
 namespace WallAI.Core.Tiles
 {
+    [DataContract]
     public class Tile2D : ITile2D, IEquatable<Tile2D>
     {
-        public Guid Id => Entity.Id;
-        public IEntity Entity { get; set; }
-        
+        [DataMember] public Guid Id { get; }
+        [DataMember] public IEntity Entity { get; set; }
+
         IEntity ITile2D.Entity { get => Entity; set => Entity = value; }
         IReadOnlyEntity IReadOnlyTile2D.Entity => Entity;
 
-        public Tile2D(IEntity entity = null) => Entity = entity;
-
-        public bool Equals(Tile2D other) => Id == other.Id;
-
-        public override bool Equals(object obj)
+        public Tile2D(Guid id, IEntity entity = null)
         {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != GetType()) return false;
-
-            return Equals((Tile2D) obj);
+            Id = id;
+            Entity = entity;
         }
 
-        public override int GetHashCode() => (Entity != null ? Entity.GetHashCode() : 0);
+        public bool Equals(Tile2D other) => Id == other.Id;
+        public override int GetHashCode() => Id.GetHashCode();
     }
 }

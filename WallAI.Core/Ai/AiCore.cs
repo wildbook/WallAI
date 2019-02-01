@@ -3,6 +3,7 @@ using WallAI.Core.Ai.Vision;
 using WallAI.Core.Entities.Stats;
 using WallAI.Core.Enums;
 using WallAI.Core.Helpers;
+using WallAI.Core.Helpers.Extensions;
 using WallAI.Core.Math.Geometry;
 using WallAI.Core.Tiles;
 using WallAI.Core.Worlds;
@@ -35,9 +36,10 @@ namespace WallAI.Core.Ai
                 Location + visionOffset);
 
             _world2D = aiWorld2D.RequestRect(entity.Id, entity.Location, visionRect);
+            Random = new LoggingRandom(_aiWorld2D.Seed ^ Tick ^ BitConverter.ToInt32(Entity.Id.ToByteArray()));
         }
 
-        public Random GetRandom() => new LoggingRandom(_aiWorld2D.Seed ^ Location.X ^ Location.Y ^ Tick);
+        public Random Random { get; }
 
         public ActionStatus Move(Direction direction)
         {
@@ -60,7 +62,7 @@ namespace WallAI.Core.Ai
             if (energyStatus.Success)
             {
                 var obj = _world2D[Location];
-                _world2D[Location] = new Tile2D();
+                _world2D[Location] = new Tile2D(Random.NextGuid());
                 _world2D[destinationPoint] = obj;
             }
 
@@ -72,7 +74,7 @@ namespace WallAI.Core.Ai
         public IReadOnlyWorld2D GetVisibleWorld()
         {
             var visionRadius = Stats.VisionRadius;
-            
+
             var fov = new RPAS(RPAS.Configuration.Default);
             var visiblePoints = fov.CalculateVisibleCells(new Circle2D(Entity.Location, visionRadius - 1), x => !IsOpaque(x.X, x.Y));
 

@@ -10,15 +10,13 @@ namespace WallAI.Simulation.Ai
 
         public void Tick(IAiCore ai)
         {
-            var rand = ai.GetRandom();
-
             if (ai.Stats.Energy == 0)
             {
                 ai.Kill();
                 return;
             }
 
-            while(!ai.Move(rand.NextEnum<Direction>()).Success);
+            while(!ai.Move(ai.Random.NextEnum<Direction>()).Success);
         }
     }
 }

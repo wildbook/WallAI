@@ -8,14 +8,14 @@ using WallAI.Core.Tiles;
 using WallAI.Core.Worlds.Entities;
 using WallAI.Core.Worlds.Tiles;
 
-namespace WallAI.Core.Worlds.Ai
+namespace WallAI.Core.Worlds
 {
     public class PartialWorld2D : IPartialWorld2D
     {
         public int Seed => _world2D.Seed;
         public Rectangle2D MaxArea { get; }
 
-        public IEnumerable<IWorld2DTile2D> Tiles => TilesInRect(MaxArea);
+        public IEnumerable<IWorld2DTile2D> Tiles => _world2D.Tiles;
 
         private readonly IWorld2D _world2D;
         private readonly Point2D _center;
@@ -81,10 +81,14 @@ namespace WallAI.Core.Worlds.Ai
             => new PartialWorld2D(this, center, worldRect, isVisible, _lifetime.CreateChild());
 
         public IEnumerable<IWorld2DTile2D> TilesInRange(Circle2D circle)
-            => _world2D.TilesInRange(circle).Select(x => x.WithLocationOffset(-_center)).Where(x => IsVisible(x.Location));
+            => _world2D.TilesInRange(circle)
+                       .Select(x => x.WithLocationOffset(-_center))
+                       .Where(x => IsVisible(x.Location));
 
         public IEnumerable<IWorld2DTile2D> TilesInRect(Rectangle2D rect)
-            => _world2D.TilesInRect(rect).Select(x => x.WithLocationOffset(-_center)).Where(x => IsVisible(x.Location));
+            => _world2D.TilesInRect(rect)
+                       .Select(x => x.WithLocationOffset(-_center))
+                       .Where(x => IsVisible(x.Location));
 
         public IEnumerable<IWorld2DEntity> Entities
         {
@@ -101,8 +105,10 @@ namespace WallAI.Core.Worlds.Ai
         public void Dispose() => _lifetime.Dispose();
 
         #region Interface implementations
-
         int IWorld2D.Seed => Seed;
+
+        IEnumerable<IWorld2DTile2D> IWorld2D.Tiles => Tiles;
+        IEnumerable<IReadOnlyWorld2DTile2D> IReadOnlyWorld2D.Tiles => Tiles;
 
         IReadOnlyTile2D IReadOnlyWorld2D.this[Point2D location] => this[location];
         ITile2D IWorld2D.this[Point2D location] { get => this[location]; set => this[location] = value; }
@@ -118,9 +124,6 @@ namespace WallAI.Core.Worlds.Ai
 
         IEnumerable<IReadOnlyWorld2DEntity> IReadOnlyWorld2D.Entities => Entities;
         IEnumerable<IWorld2DEntity> IWorld2D.Entities => Entities;
-
-        IEnumerable<IReadOnlyWorld2DTile2D> IReadOnlyPartialWorld2D.Tiles => Tiles;
-        IEnumerable<IWorld2DTile2D> IPartialWorld2D.Tiles => Tiles;
         #endregion
     }
 }

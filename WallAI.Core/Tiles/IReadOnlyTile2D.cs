@@ -1,11 +1,10 @@
-﻿using System;
-using WallAI.Core.Entities;
+﻿using WallAI.Core.Entities;
+using WallAI.Core.Interfaces;
 
 namespace WallAI.Core.Tiles
 {
-    public interface IReadOnlyTile2D
+    public interface IReadOnlyTile2D : IHasReadOnlyId
     {
-        Guid Id { get; }
         IReadOnlyEntity Entity { get; }
     }
 }

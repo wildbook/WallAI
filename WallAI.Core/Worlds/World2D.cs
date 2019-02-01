@@ -18,11 +18,16 @@ namespace WallAI.Core.Worlds
         private readonly ConcurrentDictionary<Point2D, ITile2D> _tiles;
 
         [DataMember]
+        public IEnumerable<IWorld2DTile2D> Tiles
+            => _tiles.Select(x => new World2DTile2D(x.Value, x.Key));
+
+        [DataMember]
         public IEnumerable<IWorld2DEntity> Entities
             => _tiles.Where(x => x.Value.Entity != null)
-                     .Select(x => new World2DEntity(this, x.Value.Entity, x.Key));
+                     .Select(x => new World2DEntity(x.Value.Entity, x.Key));
 
-        [DataMember] public int Seed { get; }
+        [DataMember]
+        public int Seed { get; }
 
         public static IWorld2D Create(IWorld2DMethods methods, int seed)
             => new World2D(methods, seed);
@@ -39,7 +44,7 @@ namespace WallAI.Core.Worlds
                 {
                     var point = circle.Origin + new Point2D(x, y);
                     if (circle.ContainsPoint(point))
-                        yield return new World2DTile2D(this[point], point, this);
+                        yield return new World2DTile2D(this[point], point);
                 }
         }
 
@@ -50,7 +55,7 @@ namespace WallAI.Core.Worlds
                 {
                     var point = new Point2D(x, y);
                     if (rect.ContainsPoint(point))
-                        yield return new World2DTile2D(this[point], point, this);
+                        yield return new World2DTile2D(this[point], point);
                 }
         }
 
@@ -84,6 +89,9 @@ namespace WallAI.Core.Worlds
 
         IEnumerable<IWorld2DEntity> IWorld2D.Entities => Entities;
         IEnumerable<IReadOnlyWorld2DEntity> IReadOnlyWorld2D.Entities => Entities;
+
+        IEnumerable<IWorld2DTile2D> IWorld2D.Tiles => Tiles;
+        IEnumerable<IReadOnlyWorld2DTile2D> IReadOnlyWorld2D.Tiles => Tiles;
 
         ITile2D IWorld2D.this[Point2D location] { get => this[location]; set => this[location] = value; }
         IReadOnlyTile2D IReadOnlyWorld2D.this[Point2D location] => this[location];

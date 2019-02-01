@@ -35,9 +35,10 @@ namespace WallAI.Simulation
                     VisionRadius = (byte)random.Next(1, 7),
                 };
 
-                var id = random.NextGuid();
-                var ai = random.NextByWeight(AiFactories, x => x.Weight).Factory(id, stats, stats);
-                return new Tile2D(ai);
+                var entityId = random.NextGuid();
+                var tileId = random.NextGuid();
+                var ai = random.NextByWeight(AiFactories, x => x.Weight).Factory(entityId, stats, stats);
+                return new Tile2D(tileId, ai);
             }
         }
     }

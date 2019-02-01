@@ -1,13 +1,11 @@
-﻿using System;
-using System.Runtime.Serialization;
-using WallAI.Core.Entities.Stats;
+﻿using WallAI.Core.Entities.Stats;
+using WallAI.Core.Interfaces;
 
 namespace WallAI.Core.Entities
 {
-    public interface IReadOnlyEntity
+    public interface IReadOnlyEntity : IHasReadOnlyId
     {
-        [DataMember] Guid Id { get; }
-        [DataMember] IReadOnlyStats Stats { get; }
-        [DataMember] IReadOnlyStats MaxStats { get; }
+        IReadOnlyStats Stats { get; }
+        IReadOnlyStats MaxStats { get; }
     }
 }

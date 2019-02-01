@@ -11,6 +11,7 @@ namespace WallAI.Core.Worlds
     {
         IReadOnlyTile2D this[Point2D location] { get; }
         IEnumerable<IReadOnlyWorld2DEntity> Entities { get; }
+        IEnumerable<IReadOnlyWorld2DTile2D> Tiles { get; }
         IEnumerable<IReadOnlyWorld2DTile2D> TilesInRange(Circle2D circle);
         IEnumerable<IReadOnlyWorld2DTile2D> TilesInRect(Rectangle2D circle);
         IReadOnlyPartialWorld2D CreateDerivedWorld2D(Point2D center, Rectangle2D worldRect, Func<Point2D, bool> isVisible);
