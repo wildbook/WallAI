@@ -28,6 +28,8 @@ namespace WallAI.Simulation.CUI
 
             Console.CursorVisible = false;
 
+            Console.CancelKeyPress += (_, __) => Console.CursorVisible = true;
+
             var random = new LoggingRandom(0);
 
             _simulation = new DemoSimulation(new Point2D(40, 40), random.Next());
