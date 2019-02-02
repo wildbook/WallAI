@@ -28,7 +28,7 @@ namespace WallAI.Simulation.CUI
 
             Console.CursorVisible = false;
 
-            Console.CancelKeyPress += new ConsoleCancelEventHandler(HandleConsoleCancelEventHandler);
+            Console.CancelKeyPress += (_, __) => Console.CursorVisible = true;
 
             var random = new LoggingRandom(0);
 
@@ -69,12 +69,6 @@ namespace WallAI.Simulation.CUI
 
                 Thread.Sleep(100);
             }
-        }
-
-        static void HandleConsoleCancelEventHandler(object sender, ConsoleCancelEventArgs e)
-        {
-            Console.CursorVisible = true;
-            e.Cancel = false;
         }
 
         [DllImport("libc")]
