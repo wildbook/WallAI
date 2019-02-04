@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using WallAI.Core.Exceptions;
 using WallAI.Core.Helpers.Disposables;
 using WallAI.Core.Math.Geometry;
@@ -10,11 +11,16 @@ using WallAI.Core.Worlds.Tiles;
 
 namespace WallAI.Core.Worlds
 {
+    [DataContract]
     public class PartialWorld2D : IPartialWorld2D
     {
+        [DataMember(Name = "seed")]
         public int Seed => _world2D.Seed;
+
+        [DataMember(Name = "maxArea")]
         public Rectangle2D MaxArea { get; }
 
+        [DataMember(Name = "tiles")]
         public IEnumerable<IWorld2DTile2D> Tiles => _world2D.Tiles;
 
         private readonly IWorld2D _world2D;

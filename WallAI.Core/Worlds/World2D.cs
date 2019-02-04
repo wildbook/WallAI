@@ -5,7 +5,6 @@ using System.Linq;
 using System.Runtime.Serialization;
 using WallAI.Core.Math.Geometry;
 using WallAI.Core.Tiles;
-using WallAI.Core.Worlds.Ai;
 using WallAI.Core.Worlds.Entities;
 using WallAI.Core.Worlds.Tiles;
 
@@ -17,16 +16,16 @@ namespace WallAI.Core.Worlds
         private readonly IWorld2DMethods _methods;
         private readonly ConcurrentDictionary<Point2D, ITile2D> _tiles;
 
-        [DataMember]
+        [DataMember(Name = "tiles")]
         public IEnumerable<IWorld2DTile2D> Tiles
             => _tiles.Select(x => new World2DTile2D(x.Value, x.Key));
 
-        [DataMember]
+        [DataMember(Name = "entities")]
         public IEnumerable<IWorld2DEntity> Entities
             => _tiles.Where(x => x.Value.Entity != null)
                      .Select(x => new World2DEntity(x.Value.Entity, x.Key));
 
-        [DataMember]
+        [DataMember(Name = "seed")]
         public int Seed { get; }
 
         public static IWorld2D Create(IWorld2DMethods methods, int seed)

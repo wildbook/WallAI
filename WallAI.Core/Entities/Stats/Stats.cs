@@ -1,14 +1,23 @@
 ﻿using System;
 using System.Reflection;
+using System.Runtime.Serialization;
 using WallAI.Core.Exceptions;
 
 namespace WallAI.Core.Entities.Stats
 {
+    [DataContract]
     public class Stats : IStats
     {
+        [DataMember(Name = "alive")]
         public bool Alive { get; set; }
+
+        [DataMember(Name = "energy")]
         public uint Energy { get; set; }
+
+        [DataMember(Name = "opaque")]
         public bool Opaque { get; set; }
+
+        [DataMember(Name = "visionRadius")]
         public byte VisionRadius { get; set; }
 
         public Stats() { }

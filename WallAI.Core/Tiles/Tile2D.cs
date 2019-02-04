@@ -7,8 +7,11 @@ namespace WallAI.Core.Tiles
     [DataContract]
     public class Tile2D : ITile2D, IEquatable<Tile2D>
     {
-        [DataMember] public Guid Id { get; }
-        [DataMember] public IEntity Entity { get; set; }
+        [DataMember(Name = "id")]
+        public Guid Id { get; }
+
+        [DataMember(Name = "entity")]
+        public IEntity Entity { get; set; }
 
         IEntity ITile2D.Entity { get => Entity; set => Entity = value; }
         IReadOnlyEntity IReadOnlyTile2D.Entity => Entity;

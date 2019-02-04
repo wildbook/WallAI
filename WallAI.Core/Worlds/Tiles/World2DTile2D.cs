@@ -12,9 +12,14 @@ namespace WallAI.Core.Worlds.Tiles
     {
         private readonly ITile2D _tile;
 
-        [DataMember] public Guid Id => _tile.Id;
-        [DataMember] public IEntity Entity { get => _tile.Entity; set => _tile.Entity = value; }
-        [DataMember] public Point2D Location { get; set; }
+        [DataMember(Name = "id")]
+        public Guid Id => _tile.Id;
+
+        [DataMember(Name = "entity")]
+        public IEntity Entity { get => _tile.Entity; set => _tile.Entity = value; }
+
+        [DataMember(Name = "location")]
+        public Point2D Location { get; set; }
 
         public IWorld2DTile2D WithLocationOffset(Point2D offset) => new World2DTile2D(this, Location + offset);
 

@@ -1,9 +1,11 @@
 ﻿using System.Diagnostics.Contracts;
+using System.Runtime.Serialization;
 
 namespace WallAI.Core.Math.Geometry
 {
     public readonly struct Circle2D
     {
+        [DataMember(Name = "origin")]
         public Point2D Origin { get; }
 
         public Circle2D(Point2D origin, int radius)
@@ -13,11 +15,16 @@ namespace WallAI.Core.Math.Geometry
             RadiusSquared = Radius * Radius;
         }
 
+        [DataMember(Name = "radius")]
         public int Radius { get; }
-        private int RadiusSquared { get; }
 
+        [DataMember(Name = "x")]
         public int X => Origin.X;
+
+        [DataMember(Name = "y")]
         public int Y => Origin.Y;
+
+        private int RadiusSquared { get; }
 
         [Pure]
         public bool ContainsPoint(Point2D point)

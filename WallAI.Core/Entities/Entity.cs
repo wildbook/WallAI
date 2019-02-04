@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.Serialization;
 using WallAI.Core.Ai;
 using WallAI.Core.Entities.Stats;
 
@@ -6,10 +7,16 @@ namespace WallAI.Core.Entities
 {
     public class Entity<T> : IEntity, IEquatable<Entity<T>> where T : IAi, new()
     {
+        [DataMember(Name = "ai")]
         public IAi Ai { get; }
 
+        [DataMember(Name = "stats")]
         public IStats Stats { get; set; }
+
+        [DataMember(Name = "maxStats")]
         public IStats MaxStats { get; set; }
+
+        [DataMember(Name = "id")]
         public Guid Id { get; }
 
         IReadOnlyStats IReadOnlyEntity.MaxStats => MaxStats;

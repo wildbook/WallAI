@@ -11,13 +11,23 @@ namespace WallAI.Core.Worlds.Entities
     [DataContract]
     public class World2DEntity : IWorld2DEntity
     {
-        [IgnoreDataMember] private readonly IEntity _wrappedEntity;
+        [IgnoreDataMember]
+        private readonly IEntity _wrappedEntity;
         
-        [DataMember] public Guid Id => _wrappedEntity.Id;
-        [DataMember] public IAi Ai => _wrappedEntity.Ai;
-        [DataMember] public Point2D Location { get; }
-        [DataMember] public IStats MaxStats { get => _wrappedEntity.MaxStats; set => _wrappedEntity.MaxStats = value; }
-        [DataMember] public IStats Stats { get => _wrappedEntity.Stats; set => _wrappedEntity.Stats = value; }
+        [DataMember(Name = "id")]
+        public Guid Id => _wrappedEntity.Id;
+
+        [DataMember(Name = "ai")]
+        public IAi Ai => _wrappedEntity.Ai;
+
+        [DataMember(Name = "location")]
+        public Point2D Location { get; }
+
+        [DataMember(Name = "maxStats")]
+        public IStats MaxStats { get => _wrappedEntity.MaxStats; set => _wrappedEntity.MaxStats = value; }
+
+        [DataMember(Name = "stats")]
+        public IStats Stats { get => _wrappedEntity.Stats; set => _wrappedEntity.Stats = value; }
 
         public IWorld2DEntity WithLocationOffset(Point2D offset) => new World2DEntity(_wrappedEntity, Location + offset);
 

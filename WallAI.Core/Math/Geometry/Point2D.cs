@@ -1,11 +1,16 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
+using System.Runtime.Serialization;
 
 namespace WallAI.Core.Math.Geometry
 {
+    [DataContract]
     public readonly struct Point2D : IEquatable<Point2D>
     {
+        [DataMember(Name = "x")]
         public readonly int X;
+
+        [DataMember(Name = "y")]
         public readonly int Y;
 
         public Point2D(int x, int y) { X = x; Y = y; }
@@ -37,7 +42,8 @@ namespace WallAI.Core.Math.Geometry
         /// <summary>
         /// A static <see cref="Point2D"/> with <see cref="P:X"/> and <see cref="P:Y"/> set to 0.
         /// </summary>
-        [Pure] public static Point2D Zero { get; } = new Point2D(0, 0);
+        [IgnoreDataMember]
+        public static Point2D Zero { get; } = new Point2D(0, 0);
 
         [Pure] public bool Equals(Point2D other) => (X, Y) == (other.X, other.Y);
         [Pure] public override bool Equals(object obj) => obj is Point2D other && Equals(other);

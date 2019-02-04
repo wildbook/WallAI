@@ -14,7 +14,8 @@ namespace WallAI.Core.Worlds.Ai
         //   Order of map requests being granted can not be random.
         //   Order of map requests being granted can not be decided by call order.
 
-        [DataMember] public int Seed => _w2D.Seed;
+        [DataMember(Name = "seed")]
+        public int Seed => _w2D.Seed;
 
         private readonly IWorld2D _w2D;
         public AiWorld2D(IWorld2D w2D)
