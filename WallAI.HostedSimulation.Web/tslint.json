@@ -1,0 +1,9 @@
+{
+    "extends": "tslint:latest",
+    "rules": {
+        "ban-ts-ignore": true,
+        "max-classes-per-file": [true, 1],
+        "linebreak-style": [true, "CRLF"],
+        "prefer-readonly": [true],
+	}
+}

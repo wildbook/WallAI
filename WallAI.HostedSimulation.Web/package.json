@@ -1,0 +1,21 @@
+{
+  "name": "brunch-with-typescript",
+  "version": "1.0.1",
+  "description": "Brunch with TypeScript",
+  "scripts": {
+    "start": "brunch watch --server",
+    "prod": "brunch build --production"
+  },
+  "devDependencies": {
+    "auto-reload-brunch": "^2.1.0",
+    "babel-brunch": "^7.0.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-latest": "^6.24.1",
+    "brunch": "^2.5.3",
+    "brunch-typescript": "^1.8.1",
+    "tslint": "^5.12.1",
+    "tslint-brunch": "^0.9.2",
+    "typescript": "^3.3.1",
+    "uglify-js-brunch": "^2.0.1"
+  }
+}

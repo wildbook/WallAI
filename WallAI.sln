@@ -3,11 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.168
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WallAI.Core", "WallAI.Core\WallAI.Core.csproj", "{37040BB9-86B8-4B2F-BD67-34C90EE231FA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WallAI.Core", "WallAI.Core\WallAI.Core.csproj", "{37040BB9-86B8-4B2F-BD67-34C90EE231FA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WallAI.Simulation.CUI", "WallAI.Simulation.CUI\WallAI.Simulation.CUI.csproj", "{E322C082-15FF-4A6A-9A95-8F586D86D251}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WallAI.Simulation.CUI", "WallAI.Simulation.CUI\WallAI.Simulation.CUI.csproj", "{E322C082-15FF-4A6A-9A95-8F586D86D251}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WallAI.Simulation", "WallAI.Simulation\WallAI.Simulation.csproj", "{FD9DA3D2-FABB-4273-9582-D5AD1C687F24}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WallAI.Simulation", "WallAI.Simulation\WallAI.Simulation.csproj", "{FD9DA3D2-FABB-4273-9582-D5AD1C687F24}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WallAI.HostedSimulation", "WallAI.HostedSimulation\WallAI.HostedSimulation.csproj", "{F9D232EF-532A-4612-A261-955FA6757005}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{FD9DA3D2-FABB-4273-9582-D5AD1C687F24}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FD9DA3D2-FABB-4273-9582-D5AD1C687F24}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FD9DA3D2-FABB-4273-9582-D5AD1C687F24}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F9D232EF-532A-4612-A261-955FA6757005}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F9D232EF-532A-4612-A261-955FA6757005}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F9D232EF-532A-4612-A261-955FA6757005}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F9D232EF-532A-4612-A261-955FA6757005}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
